@@ -321,12 +321,14 @@ body.edit .item:hover .star{opacity:1}
 .p-rose .q .qt{flex:1 1 0;min-width:0}
 .p-rose .q .qr{flex:1 1 100%;order:3;padding-left:26px}
 .q .qa{display:flex;flex-direction:row;gap:3px;flex:none;align-items:flex-start}
-.q .ok{opacity:0;border:0;background:transparent;color:var(--ink-4);cursor:pointer;padding:0 2px}
+.q .ok{opacity:.6;border:1px solid var(--line-2);border-radius:5px;background:#fff;color:var(--ok);cursor:pointer;
+  padding:1px 3px;display:flex;align-items:center}
 .q .ok svg{width:13px;height:13px;stroke-width:2.2}
-.q:hover .ok{opacity:1}
+.q:hover .ok{opacity:1;border-color:var(--ok)}
 .q .ok:hover{color:var(--ok)}
-.q .pin{opacity:0;border:0;background:transparent;color:var(--ink-4);cursor:pointer;padding:0 2px;font-size:11px}
+.q .pin{opacity:.6;border:0;background:transparent;color:var(--ink-4);cursor:pointer;padding:0 2px;font-size:11px}
 .q:hover .pin{opacity:1}
+@media(hover:none){ .q .ok,.q .pin{opacity:1} }
 .q.offweek{opacity:.72}
 .q .who{color:var(--ink-2);font-weight:500}
 .more{display:block;width:100%;text-align:center;border:0;background:transparent;color:var(--pt);
@@ -643,6 +645,7 @@ async function push(body, rollback){
     const r = await api(body);
     if(r && r.rev) REV = r.rev;     // свою же правку заново не тянем
     pill('ok', 'сохранено');
+    if(r && r.logError) banner('<b>Правка сохранена, но журнал правок не записался.</b> ' + esc(r.logError));
   } catch(e){
     if(rollback) rollback();
     render();
@@ -1743,8 +1746,7 @@ document.getElementById('btnDiag').onclick = async () => {
       'первые ID в таблице: ' + (d.firstIds || []).join(', '),
       'ID, который шлёт доска: ' + (first.id || '(пусто!)'),
       'строка по этому ID: ' + (d.foundRow > 0 ? d.foundRow : 'НЕ НАЙДЕНА'),
-      'пробная запись в лист: ' + (d.canWrite ? 'прошла' : 'НЕ ПРОШЛА ' + (d.writeError || '')),
-      'журнал пишется: ' + (d.logSheet ? 'да' : 'НЕТ ' + (d.logError || '')),
+      'запись в журнал: ' + (d.canWrite ? 'прошла' : 'НЕ ПРОШЛА — ' + (d.logError || d.writeError || '')),
       'не хватает листов: ' + ((d.missingSheets || []).join(', ') || 'нет'),
       d.error ? 'ошибка: ' + d.error : ''
     ].join('\n');
