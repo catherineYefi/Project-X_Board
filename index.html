@@ -1,0 +1,1847 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Проект X — доска</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+:root{
+  --ink:#1f2937; --ink-2:#4b5563; --ink-3:#6b7280; --ink-4:#9ca3af;
+  --line:#e5e7eb; --line-2:#d1d5db;
+  --paper:#fff; --card:#fff;
+  --hot:#dc2626; --hot-bg:#fef2f2;
+  --warm:#b45309; --warm-bg:#fffbeb;
+  --ok:#15803d;
+  --r:10px; --r-sm:7px;
+  --fs:14px;
+}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);
+  font:400 var(--fs)/1.45 'Onest','Manrope',-apple-system,'Segoe UI',Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:1680px;margin:0 auto;padding:0 20px 28px}
+h1,h2,h3,h4{margin:0;font-weight:700}
+button{font-family:inherit}
+svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── ШАПКА ───────────────────────────────────────── */
+.hero{padding:18px 20px 12px;max-width:1680px;margin:0 auto;
+  display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;
+  position:relative}
+.hero:after{content:'';position:absolute;right:0;top:-46px;width:230px;height:250px;
+  background:url('nechto-sphere.png') no-repeat center/contain;opacity:.07;pointer-events:none}
+h1{font-size:23px;letter-spacing:-0.01em;text-transform:uppercase}
+.sub{margin-top:3px;font-size:13px;color:var(--ink-3)}
+.sub b{font-weight:600;color:var(--ink-2)}
+.tools{display:flex;gap:6px;align-items:center;flex-wrap:wrap;position:relative;z-index:2}
+.btn{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;
+  border:1px solid var(--line-2);border-radius:var(--r-sm);background:#fff;color:var(--ink-2);
+  font:500 12.5px/1 inherit;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--ink-4)}
+.btn svg{width:14px;height:14px}
+.btn[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+select.btn{-webkit-appearance:none;appearance:none;padding-right:10px}
+.views{display:inline-flex;border:1px solid var(--line-2);border-radius:var(--r-sm);overflow:hidden}
+.views button{border:0;background:#fff;color:var(--ink-2);font:500 12.5px/1 inherit;
+  height:32px;padding:0 12px;cursor:pointer;display:flex;align-items:center;gap:6px}
+.views button svg{width:14px;height:14px}
+.views button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.savepill{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 11px;
+  border-radius:var(--r-sm);background:#f9fafb;border:1px solid var(--line);color:var(--ink-3);
+  font:500 12px/1 inherit;white-space:nowrap}
+.savepill i{width:6px;height:6px;border-radius:50%;background:var(--ink-4)}
+.savepill.ok i{background:#16a34a} .savepill.busy i{background:#f59e0b}
+.savepill.err{color:var(--hot);border-color:#fecaca} .savepill.err i{background:var(--hot)}
+.banner{margin:0 0 12px;padding:11px 14px;border-radius:var(--r-sm);font-size:13px;
+  background:var(--hot-bg);border:1px solid #fecaca;color:#991b1b;display:flex;gap:9px}
+
+/* ── ВЕРХНИЕ ПАНЕЛИ ──────────────────────────────── */
+.tier1{display:grid;grid-template-columns:1.35fr 1.25fr 1.25fr 1fr;gap:11px;margin-bottom:14px}
+.t1{border:1px solid var(--pb);border-radius:var(--r);background:var(--pl);overflow:hidden}
+.t1 .lbl{background:var(--pm);padding:8px 12px;font-size:12.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.02em;color:var(--pt);
+  display:flex;align-items:center;justify-content:center;gap:7px;text-align:center}
+.t1 .lbl svg{width:14px;height:14px;stroke-width:2}
+.t1 .in{padding:9px 11px}
+.t1.p-blue{--pl:#f5f9ff;--pm:#e3eefc;--pb:#c7ddf7;--pt:#1d4ed8}
+.t1.p-amber{--pl:#fffdf5;--pm:#fdf1d8;--pb:#f5e0b0;--pt:#b45309}
+.t1.p-rose{--pl:#fff7f8;--pm:#fce4e7;--pb:#f7c9cf;--pt:#be123c}
+.t1.p-violet{--pl:#faf8ff;--pm:#eee8fc;--pb:#dcd0f6;--pt:#6d28d9}
+
+.intent .row{display:flex;gap:9px;align-items:baseline;padding:5px 7px;background:#fff;
+  border:1px solid #eef2f7;border-radius:var(--r-sm);margin-bottom:5px;font-size:12.5px}
+.intent .row:last-child{margin-bottom:0}
+.intent .k{color:var(--ink-3);flex:none;width:132px}
+.intent .v{font-weight:500}
+.t1 ol{margin:0;padding:0;list-style:none}
+.t1 ol li{display:flex;gap:8px;align-items:flex-start;background:#fff;border:1px solid #eef2f7;
+  border-radius:var(--r-sm);padding:6px 8px;margin-bottom:5px}
+.t1 ol li:last-child{margin-bottom:0}
+.t1 ol .n{width:19px;height:19px;border-radius:50%;background:var(--pm);color:var(--pt);
+  font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+.t1 .ttl{font-size:12.5px;font-weight:500;line-height:1.3;flex:1}
+.t1 .sm{font-size:11.5px;color:var(--ink-3);flex:none;text-align:right;white-space:nowrap}
+.q{display:flex;gap:9px;background:#fff;border:1px solid #eef2f7;border-radius:var(--r-sm);
+  padding:6px 8px;margin-bottom:5px}
+.q:last-child{margin-bottom:0}
+.q .qm{width:17px;height:17px;border-radius:5px;background:var(--pm);color:var(--pt);flex:none;
+  font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.q .qt{font-size:12.5px;font-weight:600;line-height:1.3;flex:1.1}
+.q .qr{font-size:11.5px;color:var(--ink-3);flex:1.4;line-height:1.35}
+.bl{margin:0;padding:0 0 0 15px}
+.bl li{font-size:12.5px;padding:2px 0;line-height:1.35}
+.empty{color:var(--ink-4);font-size:12px}
+
+/* ── СТРИМЫ ──────────────────────────────────────── */
+.streams{column-width:315px;column-gap:11px;display:block}
+.stream{break-inside:avoid;-webkit-column-break-inside:avoid;display:inline-block;width:100%;
+  margin:0 0 11px;vertical-align:top;border:1px solid var(--sb);border-radius:var(--r);
+  background:var(--sl);overflow:hidden}
+.st-head{padding:8px 12px;background:var(--sm);cursor:pointer;display:flex;align-items:center;gap:7px}
+.st-name{flex:1;font-size:13px;font-weight:700;color:var(--st);line-height:1.25;min-width:0}
+.st-chev{color:var(--st);opacity:.6;flex:none;transition:transform .2s}
+.stream.closed .st-chev{transform:rotate(-90deg)}
+.st-in{padding:9px 11px}
+.stream.closed .st-in{display:none}
+.st-goal{background:#fff;border:1px solid #eef2f7;border-radius:var(--r-sm);padding:6px 8px;
+  font-size:12px;line-height:1.35;margin-bottom:8px}
+.st-goal b{font-weight:600}
+.st-main{background:var(--sm);border-radius:var(--r-sm);padding:6px 8px;font-size:12px;
+  font-weight:600;color:var(--st);margin-bottom:8px}
+.lbl-s{font-size:11px;font-weight:700;letter-spacing:.03em;color:var(--ink-3);
+  text-transform:uppercase;margin:0 0 4px}
+.grp{margin-bottom:7px}
+.grp.sub{background:#fff;border:1px solid #eef2f7;border-radius:var(--r-sm);padding:7px 9px}
+.grp.sub h4{font-size:11.5px;font-weight:700;color:var(--st);margin-bottom:5px}
+.st-foot{display:flex;justify-content:space-between;gap:10px;padding:7px 11px;
+  border-top:1px solid var(--sb);background:var(--sm);font-size:11.5px}
+.st-foot b{font-weight:600;color:var(--st)}
+.note{background:#fff;border:1px solid #eef2f7;border-radius:var(--r-sm);padding:7px 9px;
+  font-size:11.5px;line-height:1.4;margin-top:7px}
+.donecnt{font-size:11px;color:var(--ink-4);padding-top:5px;cursor:pointer;display:none}
+body.compact .donecnt{display:block}
+
+/* ── ФЛАЖОК С ЧЕКБОКСОМ ──────────────────────────── */
+.item{display:flex;gap:7px;padding:3px 0;align-items:flex-start}
+.mk{width:12px;height:12px;border-radius:3px;border:1.5px solid var(--line-2);background:#fff;
+  flex:none;margin-top:3px}
+.st-doing .mk{border-color:var(--warm);background:var(--warm-bg)}
+.st-done .mk{background:var(--ok);border-color:var(--ok);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12 5 5L20 6'/%3E%3C/svg%3E");
+  background-size:9px;background-position:center;background-repeat:no-repeat}
+.st-block .mk{border-color:var(--hot);background:var(--hot-bg)}
+.st-backlog .mk{border-style:dashed;opacity:.7}
+.item .bd{flex:1;min-width:0}
+.tx{font-size:12px;line-height:1.35}
+.st-done .tx{color:var(--ink-3)}
+.meta{display:flex;flex-wrap:wrap;gap:0;margin-top:1px}
+.chip{font-size:11px;color:var(--ink-4);white-space:nowrap}
+.chip svg{display:none}
+.chip+.chip:before{content:'·';margin:0 4px;color:var(--line-2)}
+.c-late{color:var(--hot);font-weight:600}
+.c-hot{color:var(--warm);font-weight:600}
+.c-block{color:var(--hot)}
+.chip.gap{color:var(--ink-4)}
+.chip.gap .g-f{display:none}
+body.check .chip.gap{color:var(--warm);font-weight:600}
+body.check .chip.gap .g-s{display:none}
+body.check .chip.gap .g-f{display:inline}
+.retro{display:none;margin-top:4px;padding-left:8px;border-left:2px solid var(--line)}
+body.retro-on .retro{display:block}
+.retro div{font-size:11px;color:var(--ink-3)}
+.retro b{color:var(--ink-4);margin-right:5px}
+.retro .miss span{color:var(--hot)}
+.ed{opacity:0;border:0;background:transparent;color:var(--ink-4);cursor:pointer;padding:0;flex:none}
+.ed svg{width:13px;height:13px}
+body.edit .item:hover .ed{opacity:1}
+body.edit .item{cursor:grab}
+.item.dragging{opacity:.35}
+.grp.over{outline:2px dashed var(--ink-4);outline-offset:3px;border-radius:var(--r-sm)}
+.addflag{border:1px dashed var(--line-2);background:#fff;color:var(--ink-4);
+  font:500 11px/1 inherit;padding:4px 9px;border-radius:var(--r-sm);cursor:pointer;margin-top:4px}
+.addflag:hover{border-color:var(--ink-3);color:var(--ink-2)}
+body:not(.edit) .addflag,body:not(.edit) #btnNewStream{display:none}
+.lock{opacity:.55}
+.lock svg{width:12px;height:12px}
+
+/* ── ПРАВИЛА ─────────────────────────────────────── */
+.rules{margin-top:14px;border:1px solid #c7ddf7;border-radius:var(--r);background:#f5f9ff;
+  padding:10px 12px;display:flex;gap:10px;align-items:flex-start}
+.rules>.lbl{font-size:12px;font-weight:700;text-transform:uppercase;color:#1d4ed8;
+  flex:none;width:74px;line-height:1.2;padding-top:4px}
+.rl{flex:1;display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.rl div{background:#fff;border:1px solid #e3eefc;border-radius:var(--r-sm);padding:6px 8px;
+  display:flex;gap:7px;font-size:11px;line-height:1.3}
+.rl b{color:#1d4ed8;font-weight:700;flex:none}
+
+/* ── КАНБАН ──────────────────────────────────────── */
+.kfilter{display:flex;gap:7px;margin-bottom:11px;flex-wrap:wrap}
+.kan{display:grid;grid-template-columns:repeat(5,minmax(180px,1fr));gap:10px;align-items:start}
+.kcol{background:#f9fafb;border:1px solid var(--line);border-radius:var(--r);padding:10px;min-height:110px}
+.kcol h3{font-size:11px;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-3);
+  margin-bottom:8px;display:flex;justify-content:space-between}
+.kcard{border:1px solid var(--line);border-left:3px solid var(--ink-4);border-radius:var(--r-sm);
+  padding:8px 9px;margin-bottom:7px;background:#fff}
+.kcard .kst{font-size:10.5px;color:var(--ink-4);margin-bottom:3px}
+.kcard .kt{font-size:12px;font-weight:500;line-height:1.3}
+
+/* ── РЕДАКТОР ────────────────────────────────────── */
+.ovl{position:fixed;inset:0;background:#1f293799;display:flex;align-items:flex-start;
+  justify-content:center;padding:36px 18px;overflow:auto;z-index:900}
+.ed-card{background:#fff;border-radius:12px;width:min(580px,100%);padding:22px 24px 18px;
+  box-shadow:0 22px 55px #1f293740}
+.ed-card h3{font-size:17px;margin-bottom:3px}
+.ed-card .hint{color:var(--ink-3);font-size:12px;margin-bottom:16px}
+.fld{margin-bottom:12px}
+.fld label{display:block;font-size:11.5px;color:var(--ink-3);margin-bottom:5px}
+.fld input,.fld select,.fld textarea{width:100%;font:400 13.5px/1.45 inherit;padding:8px 11px;
+  border:1px solid var(--line-2);border-radius:var(--r-sm);background:#fff;color:var(--ink)}
+.fld textarea{resize:vertical;min-height:58px}
+.fld input:focus,.fld select:focus,.fld textarea:focus{outline:0;border-color:var(--ink)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.ed-act{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap}
+.ed-act .left{margin-right:auto}
+.bt{border:1px solid var(--line-2);background:#fff;color:var(--ink-2);font:500 12.5px/1 inherit;
+  padding:10px 15px;border-radius:var(--r-sm);cursor:pointer}
+.bt.pri{background:var(--ink);border-color:var(--ink);color:#fff}
+.bt.warn{color:var(--hot);border-color:#fecaca}
+.ed-err{background:var(--hot-bg);color:#991b1b;border-radius:var(--r-sm);padding:9px 11px;
+  font-size:12.5px;margin-bottom:12px}
+
+/* ── РЕЖИМЫ ──────────────────────────────────────── */
+body.demo .personal,body.demo .sensitive{display:none}
+/* прячем закрытые только внутри карточек стримов — топ-3 и канбан не трогаем */
+body.compact .stream .item.st-done,body.compact .stream .item.st-backlog{display:none}
+body.compact.showdone .stream .item.st-done,body.compact.showdone .stream .item.st-backlog{display:flex}
+body.compact .st-goal,body.compact .note{display:none}
+
+@media print{
+  .tools,.savepill,.addflag,.ed,.kfilter,.banner{display:none!important}
+  .stream,.t1,.rules{break-inside:avoid}
+}
+@media(max-width:900px){
+  .wrap{padding:0 12px 24px}
+  .hero{padding:14px 12px 10px}
+  h1{font-size:18px}
+  .tier1{grid-template-columns:1fr;gap:8px}
+  .streams{column-width:auto;column-count:1}
+  .rl{grid-template-columns:1fr}
+  .rules{flex-direction:column}
+  .views,#btnNewStream,#btnPrint,#btnFit{display:none}
+  .kan{grid-template-columns:1fr}
+}
+
+/* ── ПРАВКА НА МЕСТЕ ─────────────────────────────── */
+body.edit .inl{cursor:text;border-radius:3px;padding:0 2px;margin:0 -2px;
+  transition:background .12s,box-shadow .12s}
+body.edit .inl:hover{background:#fffbe8;box-shadow:0 0 0 1px #f5e0b0}
+.inl.editing{background:#fff!important;box-shadow:0 0 0 2px #1f2937!important;outline:0}
+.ph{color:var(--ink-4);font-style:italic}
+.del{opacity:0;border:0;background:transparent;color:var(--ink-4);cursor:pointer;padding:0 2px;flex:none}
+.del svg{width:12px;height:12px}
+.q:hover .del,.bl li:hover .del{opacity:1}
+.del:hover{color:var(--hot)}
+.bl li{display:flex;gap:6px;align-items:flex-start}
+.bl li>.inl{flex:1}
+.q .qt .inl{font-weight:600}
+
+@keyframes flashIn{0%{background:#fff3cd;box-shadow:0 0 0 4px #fff3cd}100%{background:transparent;box-shadow:none}}
+.item.flash{animation:flashIn 2.6s ease-out}
+
+/* ── РЕЖИМ «ПОРЯДОК СТРИМОВ» ─────────────────────── */
+.ordbox{max-width:640px;margin:0 auto}
+.ordhint{font-size:12.5px;color:var(--ink-3);margin-bottom:12px;padding:10px 13px;
+  background:#f9fafb;border:1px solid var(--line);border-radius:var(--r)}
+.ordlist{border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:#fff}
+.orditem{display:flex;align-items:center;gap:11px;padding:11px 14px;cursor:grab;
+  border-top:1px solid var(--line);background:#fff}
+.orditem:first-child{border-top:0}
+.orditem:hover{background:#fafafa}
+.orditem.dragging{opacity:.35}
+.orditem .oh{color:var(--ink-4);flex:none;display:flex}
+.orditem .oh svg{width:15px;height:15px}
+.orditem .on{width:24px;height:24px;border-radius:6px;background:var(--sm);color:var(--sc);
+  font-size:11.5px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+.orditem .ot{flex:1;font-size:13.5px;font-weight:500}
+.orditem .oc{font-size:11.5px;color:var(--ink-4);flex:none}
+.ordact{display:flex;justify-content:flex-end;margin-top:12px}
+
+/* топ-3 с чекбоксом */
+.t1 ol li.item{align-items:center}
+.t1 .t3mk{cursor:pointer;flex:none}
+.t1 ol li .ttl{min-width:0}
+.t1 ol li .ed{opacity:0}
+.t1 ol li:hover .ed{opacity:1}
+.t1 ol li.st-done .ttl{color:var(--ink-3);text-decoration:line-through;text-decoration-color:var(--ink-4)}
+.t1 ol li.st-backlog .ttl{color:var(--ink-3)}
+.t1 ol li.st-backlog .n{background:#eef0f3;color:var(--ink-4)}
+.t1 ol li.st-backlog:after{content:'в бэклоге';position:absolute;right:34px;bottom:5px;
+  font-size:10px;color:var(--ink-4);letter-spacing:.02em}
+.t1 ol li{position:relative}
+
+/* ── ТОП-3: звёздочка, выбор, замена ─────────────── */
+.star{opacity:0;border:0;background:transparent;color:var(--ink-4);cursor:pointer;padding:0 1px;flex:none}
+.star svg{width:14px;height:14px;stroke-width:1.7}
+body.edit .item:hover .star{opacity:1}
+.star:hover{color:#b45309}
+.star.on{opacity:1;color:#d97706}
+.star.on svg{fill:#fbbf24;stroke:#d97706}
+.t1 ol li .del{opacity:0;border:0;background:transparent;color:var(--ink-4);cursor:pointer;padding:0;flex:none}
+.t1 ol li:hover .del{opacity:1}
+.t1 ol li .del:hover{color:var(--hot)}
+.t1 .addflag{width:100%;text-align:center;margin-top:2px}
+
+.pick{max-height:320px;overflow:auto;border:1px solid var(--line);border-radius:var(--r-sm);margin-bottom:4px}
+.pickrow{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;
+  border-bottom:1px solid var(--line);background:#fff;padding:9px 11px;cursor:pointer;font:inherit}
+.pickrow:last-child{border-bottom:0}
+.pickrow:hover{background:#fffbeb}
+.pickrow .pn{width:20px;height:20px;border-radius:50%;background:#fdf1d8;color:#b45309;
+  font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+.pickrow .pt{flex:1;font-size:13px;font-weight:500;color:var(--ink)}
+.pickrow .ps{font-size:11.5px;color:var(--ink-4);flex:none;max-width:38%;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.newtop{margin-top:12px;padding:9px 11px;background:#f6faf7;border:1px solid #cfe6d6;
+  border-radius:var(--r-sm);font-size:12.5px}
+
+/* ── ПРОЕКТ X: дополнения ────────────────────────── */
+.hero-in{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;width:100%}
+.c-warn{color:var(--warm);font-weight:600}
+.c-soon{color:var(--ink-3)}
+.c-far{color:var(--ink-4)}
+.savepill.ro i{background:var(--ink-4)}
+.kcard{border-left-color:var(--c,#9ca3af)}
+.kcol h3 em{font-style:normal;color:var(--ink-4)}
+
+.p-rose .q{flex-wrap:wrap;row-gap:2px}
+.p-rose .q .qt{flex:1 1 0;min-width:0}
+.p-rose .q .qr{flex:1 1 100%;order:3;padding-left:26px}
+.q .qa{display:flex;flex-direction:row;gap:3px;flex:none;align-items:flex-start}
+.q .ok{opacity:0;border:0;background:transparent;color:var(--ink-4);cursor:pointer;padding:0 2px}
+.q .ok svg{width:13px;height:13px;stroke-width:2.2}
+.q:hover .ok{opacity:1}
+.q .ok:hover{color:var(--ok)}
+.q .pin{opacity:0;border:0;background:transparent;color:var(--ink-4);cursor:pointer;padding:0 2px;font-size:11px}
+.q:hover .pin{opacity:1}
+.q.offweek{opacity:.72}
+.q .who{color:var(--ink-2);font-weight:500}
+.more{display:block;width:100%;text-align:center;border:0;background:transparent;color:var(--pt);
+  font:500 11.5px/1 inherit;padding:6px 0 2px;cursor:pointer}
+
+.decs{margin-bottom:14px;border:1px solid #bfe3c9;border-radius:var(--r);background:#f3fbf5;
+  padding:9px 12px;display:flex;gap:10px;align-items:flex-start}
+.decs>.lbl{font-size:12px;font-weight:700;text-transform:uppercase;color:var(--ok);
+  flex:none;width:74px;line-height:1.2;padding-top:4px}
+.decs .dl{flex:1;display:flex;flex-wrap:wrap;gap:6px;min-width:0}
+.decs .d{background:#fff;border:1px solid #d7eedd;border-radius:var(--r-sm);padding:5px 9px;
+  font-size:12px;line-height:1.35;max-width:100%}
+.decs .d small{color:var(--ink-4);margin-left:6px;white-space:nowrap}
+.decs .dside{display:flex;flex-direction:column;gap:5px;align-items:flex-end;flex:none}
+.decs a{font-size:11.5px;color:var(--ink-3)}
+
+.keybox{max-width:420px;margin:12vh auto 0;padding:24px;border:1px solid var(--line);border-radius:12px;background:#fff}
+.keybox h3{font-size:17px;margin-bottom:6px}
+.keybox p{font-size:13px;color:var(--ink-3);margin:0 0 14px}
+@media(max-width:900px){ .decs{flex-direction:column} .decs .dside{align-items:flex-start} }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-in">
+    <div>
+      <h1>проект x · общее пространство</h1>
+      <div class="sub" id="subline"></div>
+    </div>
+    <div class="tools">
+      <div class="views">
+        <button data-view="streams" aria-pressed="true"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>стримы</button>
+        <button data-view="kanban" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="5" height="16" rx="1"/><rect x="10" y="4" width="5" height="11" rx="1"/><rect x="17" y="4" width="4" height="7" rx="1"/></svg>канбан</button>
+      </div>
+      <span class="savepill" id="save"><i></i>загружаю…</span>
+      <select class="btn" id="week" aria-label="Неделя"></select>
+      <button class="btn" id="btnRetro" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>ретро</button>
+      <button class="btn" id="btnCheck" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="m9 11 3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>проверка правил</button>
+      <button class="btn" id="btnDemo" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>демо</button>
+      <button class="btn" id="btnOrder" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 8h16M4 16h16"/><path d="m17 5 3 3-3 3" opacity=".55"/></svg>порядок</button>
+      <button class="btn" id="btnNewStream"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>стрим</button>
+      <button class="btn" id="btnFit" aria-pressed="true"><svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg><span class="fitLbl">на экран</span><span id="fitInfo" style="margin-left:5px;opacity:.55;font-size:11px"></span></button>
+      <button class="btn" id="btnDiag"><svg viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>проверка записи</button>
+      <a class="btn" id="btnHelp" href="help.html" target="_blank" style="text-decoration:none">?</a>
+      <button class="btn" id="btnPrint"><svg viewBox="0 0 24 24"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>pdf</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="banner" id="banner" style="display:none"></div>
+  <div id="top"></div>
+  <div id="decs"></div>
+  <div class="streams" id="streams"></div>
+
+  <div class="rules">
+    <div class="lbl">Правила<br>работы</div>
+    <div class="rl" id="rules"></div>
+  </div>
+</div>
+
+<script>
+const TODAY = (()=>{ const d=new Date(); d.setHours(0,0,0,0); return d; })();
+const WEEK_END = (()=>{ const d=new Date(TODAY); d.setDate(d.getDate() + ((7 - d.getDay()) % 7)); return d; })();
+
+
+const I = {
+  building:'<path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 9h.01M9 13h.01M9 17h.01M15 9h.01M15 13h.01M15 17h.01"/>',
+  users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/>',
+  megaphone:'<path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>',
+  rocket:'<path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91 0z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/>',
+  tent:'<path d="M3.5 21 14 3"/><path d="M20.5 21 10 3"/><path d="M15.5 21 12 15l-3.5 6"/><path d="M2 21h20"/>',
+  handshake:'<path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.9-3.9a2 2 0 0 1 0-2.8l.4-.4a2 2 0 0 1 2.8 0L21 8.6"/><path d="m21 3-3 3"/><path d="M3 8.6 5.2 6.4a2 2 0 0 1 2.8 0l4 4"/>',
+  layers:'<path d="m12 2 9 5-9 5-9-5 9-5z"/><path d="m3 12 9 5 9-5"/><path d="m3 17 9 5 9-5"/>',
+  gift:'<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"/>',
+  heart:'<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>',
+  brain:'<path d="M12 5a3 3 0 1 0-5.997.125"/><path d="M12 5a3 3 0 1 1 5.997.125"/><path d="M6 12a3 3 0 0 0 0 6 3 3 0 0 0 6 0V5"/><path d="M18 12a3 3 0 0 1 0 6 3 3 0 0 1-6 0"/>',
+  calendar:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+  target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+  flag:'<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><path d="M4 22v-7"/>',
+  help:'<circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',
+  inbox:'<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.7 4H7.3a2 2 0 0 0-1.8 1.1z"/>',
+  clock:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+  user:'<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  lock:'<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+  coin:'<circle cx="12" cy="12" r="9"/><path d="M15 9.5a3 3 0 0 0-3-1.5c-1.5 0-2.5.8-2.5 2s1 1.8 2.5 2 2.5.8 2.5 2-1 2-2.5 2a3 3 0 0 1-3-1.5"/><path d="M12 6v12"/>',
+  trend:'<path d="M22 7 13.5 15.5 8.5 10.5 2 17"/><path d="M16 7h6v6"/>'
+};
+const YEAR = TODAY.getFullYear();
+function mk(mo, day){
+  let d = new Date(YEAR, mo, day);
+  if((d - TODAY)/864e5 < -200) d = new Date(YEAR+1, mo, day);
+  return d;
+}
+const MONTHS = {'январ':0,'феврал':1,'март':2,'апрел':3,'ма':4,'июн':5,'июл':6,'август':7,'сентябр':8,'октябр':9,'ноябр':10,'декабр':11};
+const svg = p => '<svg viewBox="0 0 24 24">'+p+'</svg>';
+
+function parseDeadline(raw){
+  const s = (raw||'').trim();
+  if(!s) return {kind:'none'};
+  if(/постоянн/i.test(s)) return {kind:'none', label:'постоянно'};
+  let m = s.match(/(\d{1,2})[.\/](\d{1,2})/);
+  if(m) return {kind:'date', d:mk(+m[2]-1, +m[1]), label:s};
+  m = s.match(/(\d{1,2})\s*[–—-]\s*(\d{1,2})\s*([а-яё]+)/i);
+  if(m){ const mo = monthIdx(m[3]); if(mo!==null) return {kind:'date', d:mk(mo, +m[2]), label:s}; }
+  m = s.match(/(\d{1,2})\s*([а-яё]{3,})/i);
+  if(m){ const mo = monthIdx(m[2]); if(mo!==null) return {kind:'date', d:mk(mo, +m[1]), label:s}; }
+  m = s.match(/^([а-яё]+)$/i);
+  if(m){ const mo = monthIdx(m[1]); if(mo!==null) return {kind:'rough', d:mk(mo+1, 0), label:s}; }
+  return {kind:'unclear', label:s};
+}
+function monthIdx(w){ w = w.toLowerCase(); for(const k in MONTHS) if(w.startsWith(k)) return MONTHS[k]; return null; }
+
+function dlChip(raw){
+  const p = parseDeadline(raw);
+  if(p.kind==='none') return null;
+  if(p.kind==='unclear') return {cls:'c-warn', txt:p.label+' · срок без месяца'};
+  const days = Math.round((p.d - TODAY)/864e5);
+  let cls = 'c-far';
+  if(days < 0) cls='c-late';
+  else if(p.d <= WEEK_END) cls='c-hot';
+  else if(days <= 14) cls='c-soon';
+  return {cls, txt:p.label + (days<0 ? ' · просрочено' : ''), rough:p.kind==='rough'};
+}
+
+const PROCESS_VERBS = /^(запросить|получить|достать|посмотреть|подумать|созвониться|обсудить|узнать|слетать|определить,\s*кто)/i;
+
+/* Пустое поле показывается тихо. Кнопка «Проверка правил» раскрывает номер правила. */
+function gaps(it){
+  const g = [];
+  if(it.type === 'principle' || it.st === 'done' || it.st === 'backlog') return g;
+  const o = (it.owner||'').trim();
+  if(!o) g.push({short:'owner —', full:'нет owner · правило 2'});
+  else if(/[,+/]|\sи\s/.test(o)) g.push({short:'owner ×'+(o.split(/[,+/]|\sи\s/).length), full:'несколько owner · правило 2'});
+  if(parseDeadline(it.dl).kind === 'none') g.push({short:'срок —', full:'нет срока · правило 3'});
+  if(PROCESS_VERBS.test(it.t)) g.push({short:'процесс', full:'формулировка-процесс · правило 4'});
+  if(it.st === 'block' && !it.blocker) g.push({short:'blocker —', full:'нет blocker · правило 5'});
+  return g;
+}
+
+const chip = (cls, txt, icon) =>
+  `<span class="chip ${cls}">${icon?svg(icon):''}${txt}</span>`;
+
+const gapChip = g =>
+  `<span class="chip gap"><span class="g-s">${g.short}</span><span class="g-f">${g.full}</span></span>`;
+
+
+
+/* ═══════════ КОНФИГУРАЦИЯ ═══════════
+   apiUrl — адрес веб-приложения Apps Script (меню Пространство → Показать адрес).
+   Пусто → доска работает в режиме только чтения на вшитом снимке.            */
+const CFG = {
+  // адрес веб-приложения Apps Script (…/exec). Ключ доступа сюда НЕ вписывается.
+  apiUrl: 'https://script.google.com/macros/s/AKfycbwz-cKFFYXo_JT1l8WRbDoQCARKT1orZLZsC-RV-2j3uB0l9S3iyiXh0zXR1iXMbHw_2g/exec',
+  // ссылка на саму таблицу — для кнопки «все решения»; в демо-режиме скрыта
+  sheetUrl: '',
+  decider: 'Кирилла',            // «Нужно решение …»
+  sheets: { ask: 'НУЖНО РЕШЕНИЕ', dec: 'РЕШЕНИЯ', backlog: 'БЭКЛОГ' }
+};
+
+/* Ключ доступа приходит один раз в ссылке …#k=XXXX, запоминается в браузере
+   и убирается из адресной строки, чтобы не попасть в скриншоты и пересылки. */
+const KEY = (() => {
+  let k = '';
+  const m = location.hash.match(/[#&]k=([^&]+)/);
+  if(m){
+    k = decodeURIComponent(m[1]);
+    try { localStorage.setItem('px_key', k); } catch(e){}
+    history.replaceState(null, '', location.pathname + location.search);
+  } else {
+    try { k = localStorage.getItem('px_key') || ''; } catch(e){}
+  }
+  return k;
+})();
+window.addEventListener('hashchange', () => { if(/[#&]k=/.test(location.hash)) location.reload(); });
+let WHO = (() => { try { return localStorage.getItem('px_who') || ''; } catch(e){ return ''; } })();
+
+function askKey(msg){
+  document.getElementById('top').innerHTML = '';
+  document.getElementById('decs').innerHTML = '';
+  const rl = document.querySelector('.rules'); if(rl) rl.style.display = 'none';
+  const st = document.getElementById('streams');
+  st.className = '';
+  st.innerHTML = `<div class="keybox">
+    <h3>Нужен ключ доступа</h3>
+    <p>${esc(msg || 'Откройте доску по ссылке из команды — ключ запомнится в этом браузере.')}</p>
+    <div class="fld"><label>Ключ (или вся ссылка целиком)</label><input id="keyIn"></div>
+    <div class="fld"><label>Ваше имя — для журнала правок</label><input id="whoIn" value="${esc(WHO)}"></div>
+    <div class="ed-act"><button class="bt pri" id="keyGo">Открыть доску</button></div>
+  </div>`;
+  document.getElementById('keyGo').onclick = () => {
+    let v = document.getElementById('keyIn').value.trim();
+    const m = v.match(/[#&]k=([^&\s]+)/); if(m) v = m[1];
+    const w = document.getElementById('whoIn').value.trim();
+    try { if(v) localStorage.setItem('px_key', v); if(w) localStorage.setItem('px_who', w); } catch(e){}
+    location.reload();
+  };
+}
+
+/* ═══════════ СОСТОЯНИЕ ═══════════ */
+let FLAGS = [];        // плоский список флажков — единственная модель
+let META  = [];        // строки листа СТРИМЫ
+let RAWBY = {};        // id → исходная строка таблицы (для проверки конфликтов)
+let OWNERS = [];
+let QUESTIONS = [], DECISIONS = [], BACKLOG = [], RULES = [], ARCHIVE = {}, ARCH_INTENT = {}, WEEKS = [];
+let SHOW_ALL_ASKS = false;
+let INTENT = { change:'', comm:'', mgmt:'', risk:'' };
+let WEEK_LABEL = '';
+let VIEW = 'streams';
+let LIVE = false, EDITABLE = false, VIEWING_ARCHIVE = false, VIEWING_WEEK = '';
+let KFILTER = { stream:'', owner:'' };
+let REV = '';          // версия данных, которую доска видела последней
+let SAVING = 0;        // сколько записей сейчас в полёте
+let POLL_MS = 6000;    // как часто спрашиваем счётчик
+let POLL_FAILS = 0;
+
+/* ═══════════ МЕЛОЧИ ═══════════ */
+const esc = v => String(v == null ? '' : v)
+  .replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+const yes = v => /^(да|yes|true|1|\+|x|✓)$/i.test((v || '').trim());
+const ST_CODE = { 'в работе':'doing', 'сделано':'done', 'заблокировано':'block', 'бэклог':'backlog' };
+const ST_WORD = { doing:'в работе', done:'сделано', block:'заблокировано', backlog:'бэклог', '':'' };
+const COLS = [
+  { k:'',        t:'Без статуса' },
+  { k:'doing',   t:'В работе' },
+  { k:'block',   t:'Заблокировано' },
+  { k:'done',    t:'Сделано' },
+  { k:'backlog', t:'Бэклог' }
+];
+
+function keyNorm(v){
+  const s = String(v == null ? '' : v).replace(/\u00a0/g,' ').trim().replace(/\s+/g,' ');
+  const m = s.match(/^(\d+)(?:[.,]0+)?\s*\.\s*(.*)$/);
+  return m ? m[1] + '. ' + m[2] : s;
+}
+const nameOnly = v => keyNorm(v).replace(/^\d+\.\s*/, '').toLowerCase();
+
+const CHANGED = new Set();
+
+function vm(r){
+  return {
+    id: r['ID'] || '', stream: keyNorm(r['Стрим']), sub: r['Подблок'] || '',
+    type: (r['Тип'] === 'принцип') ? 'principle' : 'flag',
+    t: r['Формулировка'] || '', owner: r['Owner'] || '', dl: r['Дедлайн'] || '',
+    st: ST_CODE[(r['Статус'] || '').toLowerCase()] || '',
+    agreed: r['Договорились'] || '', fact: r['Факт'] || '', blocker: r['Blocker'] || '',
+    top: parseInt(r['В топ-3'], 10) || 0, ask: yes(r['Нужно решение']),
+    money: yes(r['Скрывать в демо']), ord: parseFloat(r['Порядок']) || 0
+  };
+}
+const byId = id => FLAGS.find(f => f.id === id);
+
+/* Цвета в таблице яркие (#3b82f6). Приглушаем: снимаем насыщенность
+   и притемняем, чтобы стрим опознавался, но не спорил с сигналом срочности. */
+/* Из цвета стрима собираем пастельный набор как на референсе:
+   светлая заливка карточки, средняя для шапки, рамка и тёмный текст. */
+function pastel(hex){
+  const m = /^#([0-9a-f]{6})$/i.exec(hex || '');
+  const base = m ? parseInt(m[1], 16) : 0x64748b;
+  const r = (base >> 16) & 255, g = (base >> 8) & 255, b = base & 255;
+  const hx = v => Math.min(255, Math.max(0, Math.round(v))).toString(16).padStart(2, '0');
+  const toward = (v, target, k) => v + (target - v) * k;
+  const mk = k => '#' + hx(toward(r, 255, k)) + hx(toward(g, 255, k)) + hx(toward(b, 255, k));
+  const dark = k => '#' + hx(r * k) + hx(g * k) + hx(b * k);
+  return { light: mk(0.955), mid: mk(0.86), border: mk(0.7), text: dark(0.62) };
+}
+
+/* ═══════════ ОБМЕН С ТАБЛИЦЕЙ ═══════════ */
+
+function pill(cls, txt){
+  const el = document.getElementById('save');
+  el.className = 'savepill ' + cls;
+  el.innerHTML = '<i></i>' + esc(txt);
+}
+
+async function api(body){
+  if(!WHO && body.action !== 'diag'){
+    WHO = (prompt('Как подписать вас в журнале правок? Достаточно имени.') || '').trim();
+    try { if(WHO) localStorage.setItem('px_who', WHO); } catch(e){}
+  }
+  body = Object.assign({}, body, { key: KEY, who: WHO });
+  let r, raw = '';
+  try {
+    r = await fetch(CFG.apiUrl, {
+      method:'POST', headers:{ 'Content-Type':'text/plain;charset=utf-8' },
+      body: JSON.stringify(body), redirect:'follow'
+    });
+  } catch(net){
+    throw new Error('сеть/CORS: ' + net.message);
+  }
+  try { raw = await r.text(); }
+  catch(e){ throw new Error('ответ не прочитался (HTTP ' + r.status + ')'); }
+
+  let j;
+  try { j = JSON.parse(raw); }
+  catch(e){
+    // Apps Script при ошибке отдаёт HTML-страницу — показываем её начало
+    throw new Error('HTTP ' + r.status + ', ответ не JSON: ' +
+      raw.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 160));
+  }
+  if(!j.ok){
+    if(j.auth){ askKey('Ключ не подошёл. Возможно, его сменили — попросите новую ссылку.'); }
+    const e = new Error(j.error || 'скрипт вернул ошибку'); e.conflict = j.conflict; throw e; }
+  return j;
+}
+
+/** Оптимистично: сначала рисуем, потом пишем. Не прошло — откатываем и говорим. */
+async function push(body, rollback){
+  if(!EDITABLE) return;
+  pill('busy', 'сохраняю…');
+  SAVING++;
+  try {
+    const r = await api(body);
+    if(r && r.rev) REV = r.rev;     // свою же правку заново не тянем
+    pill('ok', 'сохранено');
+  } catch(e){
+    if(rollback) rollback();
+    render();
+    pill('err', e.conflict ? 'строку изменили в таблице' : 'не сохранилось');
+    if(e.conflict) setTimeout(load, 400);
+    else banner('<b>Правка не записалась в таблицу.</b> ' + esc(e.message) +
+      ' — нажмите «проверка записи», чтобы понять причину.');
+  } finally {
+    SAVING--;
+  }
+}
+
+async function load(){
+  if(!CFG.apiUrl || /ВСТАВИТЬ/.test(CFG.apiUrl)){ pill('ro', 'таблица не подключена'); return; }
+  if(!KEY){ pill('ro', 'нет ключа'); askKey(); return; }
+  // слепок до обновления: по нему поймём, что изменил кто-то другой
+  const before = {};
+  FLAGS.forEach(f => { before[f.id] = f.t + '|' + f.st + '|' + f.dl + '|' + f.owner + '|' + f.stream; });
+  const hadData = FLAGS.length > 0;
+  try {
+    const r = await fetch(CFG.apiUrl + '?key=' + encodeURIComponent(KEY), { cache:'no-store' });
+    const d = await r.json();
+    if(d.auth){ pill('err', 'нет доступа'); askKey('Ключ не подошёл. Возможно, его сменили — попросите новую ссылку.'); return; }
+    if(!d.ok) throw new Error(d.error || 'скрипт вернул ошибку');
+
+    RAWBY = {};
+    (d.flags || []).forEach(row => { if(row['ID']) RAWBY[row['ID']] = row; });
+    FLAGS  = (d.flags || []).filter(r => (r['Формулировка'] || '').trim()).map(vm);
+    META   = d.streams || [];
+    OWNERS = [...new Set((d.refs || []).map(r => r['Owner']).filter(Boolean))];
+    QUESTIONS = (d.questions || []).filter(q => (q['Вопрос'] || '').trim()).map(q => ({
+      q:q['Вопрос'], ctx:q['Контекст в одном предложении'] || '', rec:q['Рекомендация'] || '',
+      who:q['Кому решать'] || '', dl:q['Срок решения'] || '', stream:q['Стрим'] || '',
+      week: yes(q['На неделе']), done: /^решен/i.test((q['Статус'] || '').trim()) }));
+    DECISIONS = (d.decisions || []).filter(x => (x['Решение'] || '').trim());
+    BACKLOG = (d.backlog || []).map(b => b['Идея']).filter(Boolean);
+    RULES   = (d.rules || []).map(r => r['Правило']).filter(Boolean);
+    INTENT  = d.intent || INTENT;
+    WEEK_LABEL = d.weekLabel || WEEK_LABEL;
+
+    ARCHIVE = {}; ARCH_INTENT = {};
+    (d.archiveWeek || []).forEach(r => { if(r['Неделя']) ARCH_INTENT[r['Неделя']] = {
+      change:r['Что изменится к концу недели'] || '', comm:r['Главный коммерческий фокус'] || '',
+      mgmt:r['Главный управленческий фокус'] || '', risk:r['Главный риск недели'] || '' }; });
+    (d.archive || []).forEach(r => {
+      const w = r['Неделя']; if(!w) return;
+      (ARCHIVE[w] = ARCHIVE[w] || []).push(r);
+    });
+    WEEKS = [{ label:WEEK_LABEL, current:true },
+             ...Object.keys(ARCHIVE).reverse().map(l => ({ label:l }))];
+
+    CHANGED.clear();
+    if(hadData && REV){
+      FLAGS.forEach(f => {
+        const was = before[f.id];
+        if(was === undefined) { CHANGED.add(f.id); return; }   // новый флажок
+        const now = f.t + '|' + f.st + '|' + f.dl + '|' + f.owner + '|' + f.stream;
+        if(now !== was) CHANGED.add(f.id);
+      });
+    }
+    REV = d.rev || REV;
+    LIVE = true;
+    EDITABLE = true;
+    document.body.classList.add('edit');
+    banner('');
+    pill('ok', 'подключено');
+  } catch(e){
+    LIVE = false; EDITABLE = false;
+    document.body.classList.remove('edit');
+    pill('err', 'нет связи с таблицей');
+    banner('<b>Доска не смогла прочитать таблицу.</b> Показан последний снимок, ' +
+           'редактирование выключено, чтобы правки не потерялись. ' +
+           'Причина: ' + esc(e.message));
+  }
+  render();
+}
+
+function banner(html){
+  const el = document.getElementById('banner');
+  el.innerHTML = html; el.style.display = html ? 'flex' : 'none';
+}
+
+/* ═══════════ ПРАВКА НА МЕСТЕ ═══════════
+   Любой элемент с data-sh становится редактируемым по клику.
+   sh — лист, mc/mv — ключ строки, fl — колонка. */
+
+function inl(sheet, col, val, field, text, ph){
+  if(!EDITABLE) return esc(text) || (ph ? `<span class="ph">${esc(ph)}</span>` : '');
+  return `<span class="inl" data-sh="${esc(sheet)}" data-mc="${esc(col)}" data-mv="${esc(val)}"
+    data-fl="${esc(field)}" data-ph="${esc(ph || '')}">${esc(text) ||
+    `<span class="ph">${esc(ph || 'пусто')}</span>`}</span>`;
+}
+
+let EDITING = null;
+
+/** Правка поля флажка на месте — через тот же слой, что и остальные листы. */
+function flagInl(f, field, text){
+  if(!EDITABLE) return esc(text);
+  return `<span class="inl" data-fid="${esc(f.id)}" data-fl="${esc(field)}"
+    data-ph="вписать">${esc(text) || '<span class="ph">вписать</span>'}</span>`;
+}
+
+document.addEventListener('click', e => {
+  const el = e.target.closest('.inl');
+  if(!el || !EDITABLE || el.classList.contains('editing')) return;
+  EDITING = { el, before: el.dataset.mv === el.textContent.trim() ? el.textContent.trim() : el.textContent.trim() };
+  el.dataset.orig = el.textContent.trim();
+  if(el.querySelector('.ph')) el.textContent = '';
+  el.contentEditable = 'true';
+  el.classList.add('editing');
+  el.focus();
+  const r = document.createRange(); r.selectNodeContents(el);
+  const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+});
+
+document.addEventListener('keydown', e => {
+  const el = e.target.closest && e.target.closest('.inl');
+  if(!el || !el.classList.contains('editing')) return;
+  if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); el.blur(); }
+  if(e.key === 'Escape'){ el.textContent = el.dataset.orig || ''; el.blur(); }
+});
+
+document.addEventListener('blur', async e => {
+  const el = e.target.closest && e.target.closest('.inl');
+  if(!el || !el.classList.contains('editing')) return;
+  el.contentEditable = 'false';
+  el.classList.remove('editing');
+  const next = el.textContent.trim();
+  const prev = el.dataset.orig || '';
+  if(next === prev){
+    if(!next && el.dataset.ph) el.innerHTML = `<span class="ph">${esc(el.dataset.ph)}</span>`;
+    return;
+  }
+  const fid = el.dataset.fid;
+  const body = fid
+    ? { action:'update', id: fid, fields: { [el.dataset.fl]: next },
+        was: { [el.dataset.fl]: (RAWBY[fid] || {})[el.dataset.fl] || '' } }
+    : { action:'updateRow', sheet: el.dataset.sh, matchCol: el.dataset.mc,
+        matchValue: el.dataset.mv, fields: { [el.dataset.fl]: next },
+        was: { [el.dataset.fl]: prev } };
+  pill('busy', 'сохраняю…');
+  SAVING++;
+  try {
+    const res = await api(body);
+    if(res && res.rev) REV = res.rev;
+    pill('ok', 'сохранено');
+    if(fid){
+      const f = byId(fid);
+      if(f && el.dataset.fl === 'Формулировка') f.t = next;
+      if(RAWBY[fid]) RAWBY[fid][el.dataset.fl] = next;
+      render();
+    } else {
+      applyLocal(el.dataset.sh, el.dataset.mc, el.dataset.mv, el.dataset.fl, next);
+      // сменился ключ строки (текст вопроса, идеи) — соседние поля должны знать новый ключ
+      if(el.dataset.fl === el.dataset.mc) setTimeout(render, 0);
+    }
+    // если правили саму ключевую колонку, ключ теперь другой
+    if(el.dataset.fl === el.dataset.mc) el.dataset.mv = next;
+    el.dataset.orig = next;
+  } catch(err){
+    el.textContent = prev;
+    if(!prev && el.dataset.ph) el.innerHTML = `<span class="ph">${esc(el.dataset.ph)}</span>`;
+    pill('err', err.conflict ? 'строку изменили в таблице' : 'не сохранилось');
+    banner('<b>Правка не записалась.</b> ' + esc(err.message));
+    if(err.conflict) setTimeout(load, 400);
+  } finally { SAVING--; }
+}, true);
+
+/** Держим локальную модель в согласии с таблицей, чтобы перерисовка не откатила правку. */
+function applyLocal(sheet, mc, mv, fl, val){
+  if(sheet === 'НЕДЕЛЯ'){
+    const map = { 'Что изменится к концу недели':'change', 'Главный коммерческий фокус':'comm',
+                  'Главный управленческий фокус':'mgmt', 'Главный риск недели':'risk' };
+    if(map[mv]) INTENT[map[mv]] = val;
+    if(mv === 'Неделя (подпись на доске)'){ WEEK_LABEL = val; if(WEEKS[0]) WEEKS[0].label = val; }
+  }
+  if(sheet === CFG.sheets.ask){
+    const q = QUESTIONS.find(x => x.q === mv);
+    if(q){ if(fl === 'Вопрос') q.q = val; if(fl === 'Рекомендация') q.rec = val;
+           if(fl === 'Кому решать') q.who = val;
+           if(fl === 'Контекст в одном предложении') q.ctx = val; }
+  }
+  if(sheet === CFG.sheets.backlog){ const i = BACKLOG.indexOf(mv); if(i >= 0) BACKLOG[i] = val; }
+  if(sheet === 'ПРАВИЛА'){ const i = parseInt(mv, 10) - 1; if(i >= 0) RULES[i] = val; }
+  if(sheet === 'СТРИМЫ'){
+    const r = META.find(x => String(x['№']).trim() === String(mv).trim());
+    if(r) r[fl] = val;
+  }
+}
+
+/* ═══════════ СБОРКА СТРИМОВ ═══════════ */
+
+function streamList(){
+  const out = META.filter(r => r['Стрим']).map(r => {
+    const key = keyNorm(`${r['№']}. ${r['Стрим']}`);
+    const num = String(parseInt(r['№'], 10));
+    const nm  = nameOnly(r['Стрим']);
+    /* Номер стрима — главный признак принадлежности: он не меняется при
+       переименовании. Точный ключ и название работают как запасные,
+       если номера во флажке нет. */
+    let mine = FLAGS.filter(f => {
+      const fk = keyNorm(f.stream);
+      if(fk === key) return true;
+      const fn = (fk.match(/^(\d+)\./) || [])[1];
+      if(fn) return fn === num;
+      return nameOnly(f.stream) === nm;
+    });
+    return {
+      key, n: parseInt(r['№'], 10) || 0, name: r['Стрим'], goal: r['Цель'] || '',
+      main: r['Главный флажок'] || '', owner: r['Owner'] || '', dl: r['Дедлайн'] || '',
+      personal: (r['Контур'] === 'личное'),
+      icon: I[r['Иконка']] ? r['Иконка'] : 'layers',
+      c: /^#[0-9a-f]{6}$/i.test(r['Цвет'] || '') ? r['Цвет'] : '#64748b',
+      note: r['Заметка стрима'] || '',
+      ord: parseFloat(r['Порядок']) || (parseInt(r['№'], 10) || 0) * 10,
+      items: mine.sort((a, b) => a.ord - b.ord)
+    };
+  });
+  // флажки, чей стрим отсутствует в листе СТРИМЫ, не должны пропадать
+  const known = new Set(out.map(s => s.key));
+  const taken = new Set(out.map(s => String(s.n)));
+  const numOf = v => (keyNorm(v).match(/^(\d+)\./) || [])[1] || '';
+  const orphan = FLAGS.filter(f => f.stream && !known.has(f.stream) &&
+    !out.some(s => nameOnly(s.name) === nameOnly(f.stream)) &&
+    !taken.has(numOf(f.stream)));
+  if(orphan.length){
+    [...new Set(orphan.map(f => f.stream))].forEach((k, i) => out.push({
+      key:k, n: 900 + i, name: k.replace(/^\d+\.\s*/, ''), goal:'', main:'', owner:'', dl:'',
+      personal:false, icon:'layers', c:'#94a3b8', note:'', ord: (900 + i) * 10,
+      items: FLAGS.filter(f => f.stream === k).sort((a, b) => a.ord - b.ord)
+    }));
+  }
+  return out.sort((a, b) => a.ord - b.ord);
+}
+const colorOf = key => (streamList().find(s => s.key === key) || {}).c || '#94a3b8';
+
+/* ═══════════ ОТРИСОВКА: ОБЩЕЕ ═══════════ */
+
+const STAR = '<svg viewBox="0 0 24 24"><path d="M12 3.5 14.6 9l6 .8-4.3 4.2 1 6-5.3-2.9L6.7 20l1-6L3.4 9.8l6-.8Z"/></svg>';
+const CROSS = '<svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+const PENCIL = '<svg viewBox="0 0 24 24"><path d="M12 20h9"/>' +
+  '<path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>';
+
+function itemMeta(it){
+  const meta = [];
+  if(it.owner) meta.push(chip('', esc(it.owner), I.user));
+  const d = dlChip(it.dl);
+  if(d) meta.push(chip(d.cls, esc(d.txt), I.clock));
+  if(it.ask) meta.push(chip('c-warn', 'нужно решение ' + CFG.decider, I.help));
+  if(it.blocker) meta.push(chip('c-block', esc(it.blocker)));
+  gaps(it).forEach(g => meta.push(gapChip(g)));
+  return meta;
+}
+
+function renderItem(it){
+  const cls = it.st ? 'st-' + { doing:'doing', done:'done', block:'block', backlog:'backlog' }[it.st] : '';
+  const meta = itemMeta(it);
+  const retro = (it.agreed || it.fact) ? `<div class="retro">
+      <div><b>Обещали</b><span>${esc(it.agreed) || '—'}</span></div>
+      <div class="${it.fact ? 'fact' : 'miss'}"><b>Факт</b><span>${esc(it.fact) || 'не произошло'}</span></div>
+    </div>` : '';
+  return `<div class="item ${CHANGED.has(it.id) ? 'flash' : ''} ${cls} ${it.money ? 'sensitive' : ''}" data-id="${esc(it.id)}"
+      ${EDITABLE ? 'draggable="true"' : ''}>
+    <span class="mk"></span>
+    <div style="flex:1"><div class="tx">${esc(it.t)}</div>
+      ${meta.length ? `<div class="meta">${meta.join('')}</div>` : ''}${retro}</div>
+    ${EDITABLE ? `<button class="star ${it.top ? 'on' : ''}" data-star="${esc(it.id)}"
+      title="${it.top ? 'Убрать из топ-3' : 'Поднять в топ-3 недели'}">${STAR}</button>` : ''}
+    ${EDITABLE ? `<button class="ed" data-edit="${esc(it.id)}" title="Редактировать">${PENCIL}</button>` : ''}
+  </div>`;
+}
+
+/* ═══════════ ВИД «ПО СТРИМАМ» ═══════════ */
+
+function renderStream(s){
+  const real = s.items.filter(i => i.type !== 'principle' && i.st !== 'backlog');
+  const done = real.filter(i => i.st === 'done').length;
+  const closed = CLOSED.has(s.key);
+  const hidden = s.items.filter(i => i.st === 'done' || i.st === 'backlog').length;
+  const p = pastel(s.c);
+
+  const subs = [...new Set(s.items.map(i => i.sub || ''))];
+  const zone = (sub, items) =>
+    `<div class="grp ${sub ? 'sub' : ''}" data-stream="${esc(s.key)}" data-sub="${esc(sub)}">
+       ${sub ? `<h4>${esc(sub)}</h4>` : '<div class="lbl-s">флажки</div>'}
+       ${items.map(renderItem).join('')}
+       <button class="addflag" data-add="${esc(s.key)}" data-sub="${esc(sub)}">+ флажок</button>
+     </div>`;
+  const body = (subs.length <= 1 && !subs[0])
+    ? zone('', s.items)
+    : subs.map(h => zone(h, s.items.filter(i => (i.sub || '') === h))).join('');
+
+  const dl = dlChip(s.dl);
+  const note = s.note
+    ? `<div class="note"><b>${esc(s.note.split(':')[0])}:</b>${esc(s.note.split(':').slice(1).join(':'))}</div>`
+    : '';
+
+  return `<section class="stream ${closed ? 'closed' : ''} ${s.personal ? 'personal' : ''}"
+      style="--sl:${p.light};--sm:${p.mid};--sb:${p.border};--st:${p.text}">
+    <div class="st-head" data-open="${esc(s.key)}">
+      <span class="st-name">${s.n}. ${inl('СТРИМЫ', '№', String(s.n), 'Стрим', s.name)}${
+        s.personal ? ` <span class="lock">${svg(I.lock)}</span>` : ''}</span>
+      <span class="st-chev">${svg('<path d="m6 9 6 6 6-6"/>')}</span>
+    </div>
+    <div class="st-in">
+      ${(s.goal || EDITABLE) ? `<div class="st-goal"><b>Цель:</b> ${
+        inl('СТРИМЫ', '№', String(s.n), 'Цель', s.goal, 'вписать цель')}</div>` : ''}
+      ${(s.main || EDITABLE) ? `<div class="st-main">${
+        inl('СТРИМЫ', '№', String(s.n), 'Главный флажок', s.main, 'главный флажок')}</div>` : ''}
+      ${body}
+      ${hidden ? `<div class="donecnt" data-showdone="1">+ ${hidden} закрыто и в бэклоге</div>` : ''}
+      ${note}
+    </div>
+    <div class="st-foot">
+      <span>Owner: <b>${inl('СТРИМЫ', '№', String(s.n), 'Owner', s.owner, '—')}</b></span>
+      <span>Deadline: <b class="${dl ? dl.cls : ''}">${
+        inl('СТРИМЫ', '№', String(s.n), 'Дедлайн', s.dl, '—')}</b> · ${done}/${real.length}</span>
+    </div>
+  </section>`;
+}
+
+/* ═══════════ ВИД «КАНБАН» ═══════════ */
+
+function renderKanban(){
+  const streams = streamList();
+  const pick = f =>
+    (!KFILTER.stream || f.stream === KFILTER.stream) &&
+    (!KFILTER.owner  || f.owner  === KFILTER.owner);
+
+  const filters = `<div class="kfilter">
+    <select id="fStream"><option value="">Все стримы</option>${
+      streams.map(s => `<option value="${esc(s.key)}"${KFILTER.stream === s.key ? ' selected' : ''}>${esc(s.n + '. ' + s.name)}</option>`).join('')}</select>
+    <select id="fOwner"><option value="">Все owner'ы</option>${
+      OWNERS.map(o => `<option${KFILTER.owner === o ? ' selected' : ''}>${esc(o)}</option>`).join('')}</select>
+  </div>`;
+
+  const cols = COLS.map(c => {
+    const items = FLAGS.filter(f => f.st === c.k && pick(f)).sort((a, b) => a.ord - b.ord);
+    const cards = items.map(f => {
+      const s = streams.find(x => x.key === f.stream);
+      const meta = itemMeta(f);
+      return `<div class="kcard item ${f.money ? 'sensitive' : ''} ${s && s.personal ? 'personal' : ''}" data-id="${esc(f.id)}"
+          style="--c:${s ? s.c : '#94a3b8'}" ${EDITABLE ? 'draggable="true"' : ''}>
+        <div class="kst">${esc(s ? s.n + '. ' + s.name : f.stream)}</div>
+        <div class="kt">${esc(f.t)}</div>
+        ${meta.length ? `<div class="meta">${meta.join('')}</div>` : ''}
+      </div>`;
+    }).join('');
+    return `<div class="kcol" data-st="${c.k}"><h3>${c.t}<em>${items.length}</em></h3>${cards}</div>`;
+  }).join('');
+
+  return filters + `<div class="kan">${cols}</div>`;
+}
+
+/* ═══════════ ВЕРХНИЕ БЛОКИ ═══════════ */
+
+function personalKeys(){
+  return new Set(streamList().filter(s => s.personal).map(s => s.key));
+}
+
+const CHECK = '<svg viewBox="0 0 24 24"><path d="m5 12 5 5L20 6"/></svg>';
+
+function askRow(q){
+  const dl = q.dl ? dlChip(q.dl) : null;
+  const sh = CFG.sheets.ask;
+  return `<div class="q ${q.week ? '' : 'offweek'}"><span class="qm">?</span>
+    <span class="qt">${inl(sh, 'Вопрос', q.q, 'Вопрос', q.q)}</span>
+    <span class="qr"><span class="who">${esc(q.who) || 'кому —'}</span>${
+      dl ? ' · <span class="' + dl.cls + '">' + esc(dl.txt) + '</span>' : ''}<br>
+      ${inl(sh, 'Вопрос', q.q, 'Рекомендация', q.rec, 'рекомендация')}</span>
+    ${EDITABLE ? `<span class="qa">
+      <button class="ok" data-resolve="${esc(q.q)}" title="Решено — записать решение">${CHECK}</button>
+      <button class="pin" data-weekpin="${esc(q.q)}" title="${q.week ? 'Снять с этой недели' : 'Решаем на этой неделе'}">${q.week ? '−нед' : '+нед'}</button>
+    </span>` : ''}</div>`;
+}
+
+function renderTop(){
+  const top = topList();
+  const pers = personalKeys();
+  const t3 = top.map((f, i) => {
+    const d = dlChip(f.dl);
+    const cls = f.st ? 'st-' + f.st : '';
+    const hide = (f.money ? ' sensitive' : '') + (pers.has(f.stream) ? ' personal' : '');
+    return `<li class="item ${cls}${hide}" data-id="${esc(f.id)}">
+      <span class="n">${i + 1}</span>
+      <span class="mk t3mk" data-mk="${esc(f.id)}" title="Отметить сделанным"></span>
+      <span class="ttl">${flagInl(f, 'Формулировка', f.t)}</span>
+      <span class="sm">${esc(f.owner) || 'owner —'}${d ? '<br><span class="' + d.cls + '">' + esc(d.txt) + '</span>' : ''}</span>
+      ${EDITABLE ? `<button class="ed" data-edit="${esc(f.id)}" title="Редактировать">${PENCIL}</button>` : ''}
+      ${EDITABLE ? `<button class="del" data-untop="${esc(f.id)}" title="Убрать из топ-3">${CROSS}</button>` : ''}
+    </li>`;
+  }).join('') || '<div class="empty">топ-3 не проставлен</div>';
+  const t3add = (EDITABLE && top.length < 3)
+    ? `<button class="addflag" data-pick="1">+ выбрать флажок</button>` : '';
+
+  // Нужно решение: вопросы этой недели + флажки с меткой. Остальные открытые — по кнопке.
+  const open = QUESTIONS.filter(q => !q.done);
+  const onWeek = open.filter(q => q.week);
+  const rest = open.filter(q => !q.week);
+  const flagAsks = FLAGS.filter(f => f.ask && f.st !== 'done' && f.st !== 'backlog').map(f =>
+    `<div class="q ${f.money ? 'sensitive' : ''} ${pers.has(f.stream) ? 'personal' : ''}"><span class="qm">!</span>
+      <span class="qt">${esc(f.t)}</span><span class="qr">флажок · ${esc(f.owner) || 'owner —'}</span></div>`);
+  const asks = onWeek.map(askRow).join('') + flagAsks.join('') +
+    (SHOW_ALL_ASKS ? rest.map(askRow).join('') : '') ||
+    '<div class="empty">на эту неделю решений не вынесено</div>';
+  const moreBtn = rest.length
+    ? `<button class="more" data-allasks="1">${SHOW_ALL_ASKS ? 'скрыть остальные' : 'ещё открытых вопросов: ' + rest.length}</button>` : '';
+
+  document.getElementById('top').innerHTML = `
+  <div class="tier1">
+    <div class="t1 p-blue"><div class="lbl">${svg(I.target)}Замысел недели</div>
+      <div class="in intent">
+        ${[['Что изменится к концу недели', INTENT.change],
+           ['Главный коммерческий фокус', INTENT.comm],
+           ['Главный управленческий фокус', INTENT.mgmt],
+           ['Главный риск недели', INTENT.risk]].map(([k, v]) =>
+          `<div class="row"><div class="k">${k}</div><div class="v">${
+            inl('НЕДЕЛЯ', 'Поле', k, 'Значение', v, 'вписать')}</div></div>`).join('')}
+      </div></div>
+    <div class="t1 p-amber"><div class="lbl">${svg(I.flag)}Топ-3 флажка недели</div>
+      <div class="in"><ol>${t3}</ol>${t3add}</div></div>
+    <div class="t1 p-rose"><div class="lbl">${svg(I.help)}Нужно решение ${esc(CFG.decider)}</div>
+      <div class="in">${asks}${moreBtn}${
+        EDITABLE ? `<button class="addflag" data-new="${esc(CFG.sheets.ask)}">+ вопрос</button>` : ''}</div></div>
+    <div class="t1 p-violet"><div class="lbl">${svg(I.inbox)}Backlog</div>
+      <div class="in"><ul class="bl">${
+        BACKLOG.map(b => `<li>${inl(CFG.sheets.backlog, 'Идея', b, 'Идея', b)}${
+          EDITABLE ? `<button class="del" data-del-sheet="${esc(CFG.sheets.backlog)}" data-del-col="Идея"
+            data-del-val="${esc(b)}" title="Убрать идею">${CROSS}</button>` : ''}</li>`).join('')
+        || '<li class="empty">пусто</li>'}</ul>${
+        EDITABLE ? `<button class="addflag" data-new="${esc(CFG.sheets.backlog)}">+ идея</button>` : ''}</div></div>
+  </div>`;
+
+  // Решено за неделю — журнал решений на доске
+  const wk = (VIEWING_WEEK || WEEK_LABEL || '').trim();
+  const mine = DECISIONS.filter(d => (d['Неделя'] || '').trim() === wk);
+  document.getElementById('decs').innerHTML = `<div class="decs">
+    <div class="lbl">Решено<br>за неделю</div>
+    <div class="dl">${mine.map(d => `<div class="d">${esc(d['Решение'])}<small>${
+      esc(d['Кто решил'] || '')}${d['Дата'] ? ' · ' + esc(d['Дата']) : ''}</small></div>`).join('')
+      || '<span class="empty">решений этой недели пока нет — записываются кнопкой ✓ у вопроса или «+ решение»</span>'}</div>
+    <div class="dside">
+      ${EDITABLE && !VIEWING_ARCHIVE ? '<button class="addflag" data-newdec="1">+ решение</button>' : ''}
+      ${CFG.sheetUrl ? `<a class="sensitive" href="${esc(CFG.sheetUrl)}" target="_blank">все решения: ${DECISIONS.length}</a>`
+        : `<span class="empty">всего в журнале: ${DECISIONS.length}</span>`}
+    </div>
+  </div>`;
+}
+
+/* Решение: короткая форма — что решили и кто. Пишется в лист РЕШЕНИЯ. */
+function openDecision(question){
+  const q = question ? QUESTIONS.find(x => x.q === question) : null;
+  document.body.insertAdjacentHTML('beforeend', `<div class="ovl" id="ovl"><div class="ed-card">
+    <h3>${q ? 'Вопрос решён' : 'Новое решение'}</h3>
+    <div class="hint">${q ? esc(q.q) : 'Запись попадёт в журнал решений с датой и подписью недели.'}</div>
+    <div id="edErr"></div>
+    ${field('Что решили — одной фразой, как факт', `<textarea id="dT"></textarea>`)}
+    ${field('Кто решил / где', `<input id="dW" value="${esc(q ? q.who : '')}" placeholder="Кирилл · синхрон тройки">`)}
+    <div class="ed-act">
+      <button class="bt" id="dCancel">Отмена</button>
+      <button class="bt pri" id="dSave">Записать</button>
+    </div>
+  </div></div>`);
+  document.getElementById('dCancel').onclick = closeEditor;
+  document.getElementById('ovl').onclick = e => { if(e.target.id === 'ovl') closeEditor(); };
+  setTimeout(() => document.getElementById('dT').focus(), 30);
+  document.getElementById('dSave').onclick = async () => {
+    const text = document.getElementById('dT').value.trim();
+    const by = document.getElementById('dW').value.trim();
+    if(!text){ document.getElementById('edErr').innerHTML =
+      '<div class="ed-err">Решение не может быть пустым.</div>'; return; }
+    closeEditor(); pill('busy', 'записываю…');
+    try {
+      if(q) await api({ action:'resolve', question: q.q, decision: text, by });
+      else await api({ action:'createRow', sheet: CFG.sheets.dec, fields: { 'Решение': text, 'Кто решил': by } });
+      pill('ok', 'записано'); load();
+    } catch(err){ pill('err', 'не записалось'); banner('<b>Решение не записалось.</b> ' + esc(err.message)); }
+  };
+}
+
+let CLOSED = new Set();
+
+function render(weekLabel){
+  const streams = streamList();
+  renderTop();
+  document.getElementById('streams').innerHTML =
+    ORDER_MODE ? renderOrder()
+    : VIEW === 'kanban' ? renderKanban()
+    : streams.map(renderStream).join('');
+  document.getElementById('streams').className =
+    (ORDER_MODE || VIEW === 'kanban') ? '' : 'streams';
+  document.getElementById('rules').innerHTML =
+    RULES.map((r, i) => `<div><b>${i + 1}</b><span>${
+      inl('ПРАВИЛА', '№', String(i + 1), 'Правило', r)}</span></div>`).join('');
+
+  let gapTotal = 0;
+  FLAGS.forEach(i => { gapTotal += gaps(i).length; });
+  document.getElementById('subline').innerHTML = [
+    '<b>' + inl('НЕДЕЛЯ', 'Поле', 'Неделя (подпись на доске)', 'Значение', weekLabel || WEEK_LABEL) + '</b>',
+    streams.length + ' стримов',
+    FLAGS.length + ' флажков',
+    gapTotal + ' полей без owner или срока',
+    LIVE ? null : 'снимок, таблица не подключена'
+  ].filter(Boolean).join(' · ');
+
+  const sel = document.getElementById('week');
+  sel.innerHTML = WEEKS.map(w =>
+    `<option value="${esc(w.label)}"${w.label === (weekLabel || WEEK_LABEL) ? ' selected' : ''}>${esc(w.label)}${w.current ? '' : ' · архив'}</option>`).join('');
+  sel.disabled = WEEKS.length < 2;
+
+  document.querySelectorAll('[data-view]').forEach(b =>
+    b.setAttribute('aria-pressed', b.dataset.view === VIEW));
+  if(typeof applyFit === 'function') requestAnimationFrame(applyFit);
+}
+
+/* ═══════════ ПЕРЕТАСКИВАНИЕ ═══════════ */
+
+let DRAG = null;
+
+function afterElement(zone, y){
+  const els = [...zone.querySelectorAll('.item:not(.dragging)')];
+  return els.reduce((closest, el) => {
+    const box = el.getBoundingClientRect();
+    const off = y - box.top - box.height / 2;
+    return (off < 0 && off > closest.off) ? { off, el } : closest;
+  }, { off: -Infinity, el: null }).el;
+}
+
+document.addEventListener('dragstart', e => {
+  const it = e.target.closest('.item');
+  if(!it || !EDITABLE) return;
+  DRAG = it.dataset.id;
+  it.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  try { e.dataTransfer.setData('text/plain', DRAG); } catch(x){}
+});
+
+document.addEventListener('dragend', () => {
+  document.querySelectorAll('.dragging').forEach(el => el.classList.remove('dragging'));
+  document.querySelectorAll('.over').forEach(el => el.classList.remove('over'));
+  DRAG = null;
+});
+
+document.addEventListener('dragover', e => {
+  const zone = e.target.closest('.grp, .kcol');
+  if(!zone || !DRAG) return;
+  e.preventDefault();
+  document.querySelectorAll('.over').forEach(el => { if(el !== zone) el.classList.remove('over'); });
+  zone.classList.add('over');
+  const drag = document.querySelector('.dragging');
+  if(!drag) return;
+  const after = afterElement(zone, e.clientY);
+  if(after) zone.insertBefore(drag, after);
+  else {
+    const btn = zone.querySelector('.addflag');
+    btn ? zone.insertBefore(drag, btn) : zone.appendChild(drag);
+  }
+});
+
+document.addEventListener('drop', e => {
+  const zone = e.target.closest('.grp, .kcol');
+  if(!zone || !DRAG) return;
+  e.preventDefault();
+  zone.classList.remove('over');
+
+  const f = byId(DRAG);
+  if(!f) return;
+  const before = { stream:f.stream, sub:f.sub, st:f.st, ord:f.ord };
+
+  if(zone.classList.contains('kcol')){
+    // канбан меняет только статус: порядок внутри стримов не трогаем
+    if(f.st === zone.dataset.st){ render(); return; }
+    const wasSt = f.st;
+    f.st = zone.dataset.st;
+    render();
+    push({ action:'update', id:f.id, fields:{ 'Статус': ST_WORD[f.st] || '' },
+           was:{ 'Статус': (RAWBY[f.id] || {})['Статус'] || '' } }, () => { f.st = wasSt; });
+    if(RAWBY[f.id]) RAWBY[f.id]['Статус'] = ST_WORD[f.st] || '';
+    return;
+  }
+  f.stream = zone.dataset.stream; f.sub = zone.dataset.sub || '';
+
+  // порядок берём из фактического расположения карточек в зоне
+  const ids = [...zone.querySelectorAll('.item')].map(el => el.dataset.id);
+  const items = ids.map(id => byId(id)).filter(Boolean);
+  items.forEach((it, i) => { it.ord = (i + 1) * 10; });
+
+  render();
+  push({
+    action:'move',
+    items: items.map(it => ({
+      id: it.id, 'Стрим': it.stream, 'Подблок': it.sub,
+      'Статус': ST_WORD[it.st] || '', 'Порядок': String(it.ord)
+    }))
+  }, () => { Object.assign(f, before); });
+});
+
+/* ═══════════ РЕДАКТОР ═══════════ */
+
+function closeEditor(){ const o = document.getElementById('ovl'); if(o) o.remove(); }
+
+function field(label, html){ return `<div class="fld"><label>${label}</label>${html}</div>`; }
+const ownerOptions = sel => `<option value=""></option>` +
+  OWNERS.map(o => `<option${o === sel ? ' selected' : ''}>${esc(o)}</option>`).join('') +
+  (sel && !OWNERS.includes(sel) ? `<option selected>${esc(sel)}</option>` : '');
+
+function openEditor(id){
+  const f = byId(id); if(!f) return;
+  const streams = streamList();
+  const html = `<div class="ovl" id="ovl"><div class="ed-card">
+    <h3>Флажок</h3>
+    <div class="hint">Изменения уходят в таблицу сразу после сохранения.</div>
+    <div id="edErr"></div>
+    ${field('Формулировка — результат, а не действие',
+      `<textarea id="eT">${esc(f.t)}</textarea>`)}
+    <div class="two">
+      ${field('Owner', `<select id="eO">${ownerOptions(f.owner)}</select>`)}
+      ${field('Дедлайн', `<input id="eD" value="${esc(f.dl)}" placeholder="15.08 · 10–15 августа · сентябрь">`)}
+    </div>
+    <div class="two">
+      ${field('Статус', `<select id="eS">${COLS.map(c =>
+        `<option value="${c.k}"${f.st === c.k ? ' selected' : ''}>${c.t}</option>`).join('')}</select>`)}
+      ${field('Стрим', `<select id="eStream">${streams.map(s =>
+        `<option value="${esc(s.key)}"${f.stream === s.key ? ' selected' : ''}>${esc(s.n + '. ' + s.name)}</option>`).join('')}</select>`)}
+    </div>
+    ${field('Договорились — что обещали на прошлом синхроне', `<textarea id="eA">${esc(f.agreed)}</textarea>`)}
+    ${field('Факт — что реально произошло', `<textarea id="eF">${esc(f.fact)}</textarea>`)}
+    ${field('Blocker', `<input id="eB" value="${esc(f.blocker)}">`)}
+    <div class="two">
+      ${field('Поднять в топ-3 недели', `<select id="eTop">${[0,1,2,3].map(n =>
+        `<option value="${n}"${f.top === n ? ' selected' : ''}>${n ? 'место ' + n : 'не в топ-3'}</option>`).join('')}</select>`)}
+      ${field('Тип записи', `<select id="eType">
+        <option value="флажок"${f.type !== 'principle' ? ' selected' : ''}>обычный флажок</option>
+        <option value="принцип"${f.type === 'principle' ? ' selected' : ''}>принцип — не считается в прогрессе</option></select>`)}
+    </div>
+    <div class="two">
+      ${field('Нужно решение ' + CFG.decider, `<select id="eAsk">
+        <option value=""${!f.ask ? ' selected' : ''}>нет</option>
+        <option value="да"${f.ask ? ' selected' : ''}>да</option></select>`)}
+      ${field('Скрывать в демо-режиме', `<select id="eMoney">
+        <option value=""${!f.money ? ' selected' : ''}>нет</option>
+        <option value="да"${f.money ? ' selected' : ''}>да</option></select>`)}
+    </div>
+    <div class="ed-act">
+      <button class="bt warn left" id="eBacklog">В бэклог</button>
+      <button class="bt" id="eCancel">Отмена</button>
+      <button class="bt pri" id="eSave">Сохранить</button>
+    </div>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend', html);
+
+  document.getElementById('eCancel').onclick = closeEditor;
+  document.getElementById('ovl').onclick = e => { if(e.target.id === 'ovl') closeEditor(); };
+  document.getElementById('eBacklog').onclick = () => {
+    document.getElementById('eS').value = 'backlog';
+    document.getElementById('eSave').click();
+  };
+  document.getElementById('eSave').onclick = () => saveEditor(f);
+}
+
+function saveEditor(f){
+  const g = id => document.getElementById(id).value.trim();
+  const next = {
+    'Формулировка': g('eT'), 'Owner': g('eO'), 'Дедлайн': g('eD'),
+    'Статус': ST_WORD[g('eS')] || '', 'Стрим': g('eStream'),
+    'Договорились': g('eA'), 'Факт': g('eF'), 'Blocker': g('eB'),
+    'В топ-3': g('eTop') === '0' ? '' : g('eTop'),
+    'Тип': g('eType'), 'Нужно решение': g('eAsk'), 'Скрывать в демо': g('eMoney')
+  };
+  if(!next['Формулировка']){
+    document.getElementById('edErr').innerHTML =
+      '<div class="ed-err">Формулировка не может быть пустой.</div>';
+    return;
+  }
+  const raw = RAWBY[f.id] || {};
+  const was = {}; Object.keys(next).forEach(k => { was[k] = (raw[k] || ''); });
+  const before = { ...f };
+
+  Object.assign(f, {
+    t: next['Формулировка'], owner: next['Owner'], dl: next['Дедлайн'],
+    st: ST_CODE[next['Статус'].toLowerCase()] || '', stream: keyNorm(next['Стрим']),
+    agreed: next['Договорились'], fact: next['Факт'], blocker: next['Blocker'],
+    top: parseInt(next['В топ-3'], 10) || 0, type: next['Тип'] === 'принцип' ? 'principle' : 'flag',
+    ask: yes(next['Нужно решение']), money: yes(next['Скрывать в демо'])
+  });
+  Object.assign(raw, next);
+  closeEditor();
+  render();
+  push({ action:'update', id:f.id, fields:next, was }, () => Object.assign(f, before));
+}
+
+/* ═══════════ СОЗДАНИЕ ═══════════ */
+
+function openNewFlag(streamKey, sub){
+  const streams = streamList();
+  document.body.insertAdjacentHTML('beforeend', `<div class="ovl" id="ovl"><div class="ed-card">
+    <h3>Новый флажок</h3>
+    <div class="hint">Формулировка — результат, который должен стать правдой.</div>
+    <div id="edErr"></div>
+    ${field('Формулировка', `<textarea id="nT" autofocus></textarea>`)}
+    ${field('Стрим', `<select id="nStream">${streams.map(s =>
+      `<option value="${esc(s.key)}"${s.key === streamKey ? ' selected' : ''}>${esc(s.n + '. ' + s.name)}</option>`).join('')}</select>`)}
+    <div class="two">
+      ${field('Owner', `<select id="nO">${ownerOptions('')}</select>`)}
+      ${field('Дедлайн', `<input id="nD" placeholder="15.08">`)}
+    </div>
+    <div class="ed-act">
+      <button class="bt" id="nCancel">Отмена</button>
+      <button class="bt pri" id="nSave">Создать</button>
+    </div>
+  </div></div>`);
+  document.getElementById('nCancel').onclick = closeEditor;
+  document.getElementById('ovl').onclick = e => { if(e.target.id === 'ovl') closeEditor(); };
+  document.getElementById('nSave').onclick = async () => {
+    const t = document.getElementById('nT').value.trim();
+    if(!t){ document.getElementById('edErr').innerHTML =
+      '<div class="ed-err">Формулировка не может быть пустой.</div>'; return; }
+    const stream = document.getElementById('nStream').value;
+    const maxOrd = Math.max(0, ...FLAGS.filter(f => f.stream === stream).map(f => f.ord));
+    const fields = {
+      'Стрим': stream, 'Подблок': sub || '', 'Тип': 'флажок', 'Формулировка': t,
+      'Owner': document.getElementById('nO').value, 'Дедлайн': document.getElementById('nD').value.trim(),
+      'Порядок': String(maxOrd + 10)
+    };
+    closeEditor(); pill('busy', 'создаю…');
+    try {
+      const r = await api({ action:'createFlag', fields });
+      RAWBY[r.id] = { ...fields, ID:r.id };
+      FLAGS.push(vm({ ...fields, ID:r.id }));
+      render(); pill('ok', 'создано');
+    } catch(e){ pill('err', 'не создалось'); }
+  };
+}
+
+function openNewStream(){
+  document.body.insertAdjacentHTML('beforeend', `<div class="ovl" id="ovl"><div class="ed-card">
+    <h3>Новый стрим</h3>
+    <div class="hint">Появится в таблице на листе СТРИМЫ со следующим номером.</div>
+    <div id="edErr"></div>
+    ${field('Название', `<input id="sName" placeholder="НЕЧТО | Найм">`)}
+    ${field('Цель', `<textarea id="sGoal"></textarea>`)}
+    ${field('Главный флажок', `<input id="sMain">`)}
+    <div class="two">
+      ${field('Owner', `<select id="sO">${ownerOptions('')}</select>`)}
+      ${field('Дедлайн', `<input id="sD" placeholder="15.08">`)}
+    </div>
+    <div class="two">
+      ${field('Контур', `<select id="sK"><option>бизнес</option><option>личное</option></select>`)}
+      ${field('Цвет', `<input id="sC" value="#64748b">`)}
+    </div>
+    <div class="ed-act">
+      <button class="bt" id="sCancel">Отмена</button>
+      <button class="bt pri" id="sSave">Создать</button>
+    </div>
+  </div></div>`);
+  document.getElementById('sCancel').onclick = closeEditor;
+  document.getElementById('ovl').onclick = e => { if(e.target.id === 'ovl') closeEditor(); };
+  document.getElementById('sSave').onclick = async () => {
+    const name = document.getElementById('sName').value.trim();
+    if(!name){ document.getElementById('edErr').innerHTML =
+      '<div class="ed-err">Название не может быть пустым.</div>'; return; }
+    const fields = {
+      'Стрим': name, 'Цель': document.getElementById('sGoal').value.trim(),
+      'Главный флажок': document.getElementById('sMain').value.trim(),
+      'Owner': document.getElementById('sO').value,
+      'Дедлайн': document.getElementById('sD').value.trim(),
+      'Контур': document.getElementById('sK').value,
+      'Цвет': document.getElementById('sC').value.trim() || '#64748b', 'Иконка': 'layers'
+    };
+    closeEditor(); pill('busy', 'создаю…');
+    try {
+      const r = await api({ action:'createStream', fields });
+      META.push({ ...fields, '№': String((r.key || '').split('.')[0] || META.length + 1) });
+      render(); pill('ok', 'создано');
+    } catch(e){ pill('err', 'не создалось'); }
+  };
+}
+
+/* ═══════════ ТОП-3 НЕДЕЛИ ═══════════
+   Ровно три места. Номер — позиция, а не признак: доска сама следит,
+   чтобы номера шли 1-2-3 без дублей и дыр. */
+
+const TOP_MAX = 3;
+
+/** Актуальный топ-3: дубли и пропуски нормализуются при показе. */
+function topList(){
+  return FLAGS.filter(f => f.top > 0)
+    .sort((a, b) => (a.top - b.top) || (a.ord - b.ord))
+    .slice(0, TOP_MAX);
+}
+
+/** Задаёт топ-3 списком: всем из списка номера 1..N, всем прочим — пусто.
+    Так дубли и дыры в нумерации исчезают при любой операции. */
+async function applyTopOrder(list){
+  const want = new Map();
+  list.slice(0, TOP_MAX).forEach((f, i) => want.set(f.id, i + 1));
+
+  const changes = [];
+  FLAGS.forEach(f => {
+    const next = want.get(f.id) || 0;
+    if(next !== f.top) changes.push({ f, from: f.top, to: next });
+  });
+  if(!changes.length) return;
+
+  changes.forEach(c => { c.f.top = c.to; });
+  render();
+
+  pill('busy', 'сохраняю…');
+  SAVING++;
+  try {
+    // одним запросом: либо записались все места, либо ни одно
+    const r = await api({ action:'updateMany', items: changes.map(c => ({
+      id: c.f.id, fields: { 'В топ-3': c.to ? String(c.to) : '' },
+      was: { 'В топ-3': (RAWBY[c.f.id] || {})['В топ-3'] || '' } })) });
+    if(r && r.rev) REV = r.rev;
+    changes.forEach(c => { if(RAWBY[c.f.id]) RAWBY[c.f.id]['В топ-3'] = c.to ? String(c.to) : ''; });
+    pill('ok', 'сохранено');
+  } catch(e){
+    changes.forEach(c => { c.f.top = c.from; });
+    render();
+    pill('err', e.conflict ? 'строку изменили в таблице' : 'не сохранилось');
+    banner('<b>Топ-3 не записался.</b> ' + esc(e.message));
+    if(e.conflict) setTimeout(load, 400);
+  } finally { SAVING--; }
+}
+
+/** Убрать из топ-3 — остальные подтягиваются вверх. */
+function removeFromTop(f){
+  applyTopOrder(topList().filter(x => x.id !== f.id));
+}
+
+/** Поднять в топ-3. Если все три места заняты — спрашиваем, кого заменить. */
+function addToTop(f){
+  if(f.top > 0){ removeFromTop(f); return; }
+  const cur = topList();
+  if(cur.length < TOP_MAX){ applyTopOrder(cur.concat([f])); return; }
+  askReplace(f, cur);
+}
+
+function askReplace(f, cur){
+  document.body.insertAdjacentHTML('beforeend', `<div class="ovl" id="ovl"><div class="ed-card">
+    <h3>В топ-3 уже три флажка</h3>
+    <div class="hint">Топ-3 — это ровно три главных результата недели.
+      Выберите, какой из них уступит место.</div>
+    <div class="pick">${cur.map(x => `
+      <button class="pickrow" data-replace="${esc(x.id)}">
+        <span class="pn">${x.top}</span>
+        <span class="pt">${esc(x.t)}</span>
+        <span class="ps">${esc(x.owner) || 'owner —'}</span>
+      </button>`).join('')}</div>
+    <div class="newtop"><b>Поднимаем:</b> ${esc(f.t)}</div>
+    <div class="ed-act"><button class="bt" onclick="closeEditor()">Отмена</button></div>
+  </div></div>`);
+  document.getElementById('ovl').onclick = e => { if(e.target.id === 'ovl') closeEditor(); };
+  document.querySelectorAll('[data-replace]').forEach(b => {
+    b.onclick = () => {
+      const out = byId(b.dataset.replace);
+      closeEditor();
+      applyTopOrder(topList().map(x => (x.id === out.id ? f : x)));
+    };
+  });
+}
+
+/** Выбор флажка для топ-3 из общего списка, с поиском. */
+function openPicker(){
+  const cur = new Set(topList().map(f => f.id));
+  const free = FLAGS.filter(f => !cur.has(f.id) && f.type !== 'principle' && f.st !== 'done');
+  const streams = streamList();
+  const nameOf = k => { const s = streams.find(x => x.key === k); return s ? s.n + '. ' + s.name : k; };
+
+  document.body.insertAdjacentHTML('beforeend', `<div class="ovl" id="ovl"><div class="ed-card">
+    <h3>Поднять в топ-3 недели</h3>
+    <div class="hint">Три главных результата, которые должны стать правдой к концу недели.</div>
+    <div class="fld"><input id="pickSearch" placeholder="Поиск по формулировке или стриму" autofocus></div>
+    <div class="pick" id="pickList">${free.map(f => `
+      <button class="pickrow" data-pickid="${esc(f.id)}"
+        data-search="${esc((f.t + ' ' + nameOf(f.stream)).toLowerCase())}">
+        <span class="pt">${esc(f.t)}</span>
+        <span class="ps">${esc(nameOf(f.stream))}</span>
+      </button>`).join('') || '<div class="empty">свободных флажков нет</div>'}</div>
+    <div class="ed-act"><button class="bt" onclick="closeEditor()">Отмена</button></div>
+  </div></div>`);
+  document.getElementById('ovl').onclick = e => { if(e.target.id === 'ovl') closeEditor(); };
+  const inp = document.getElementById('pickSearch');
+  inp.oninput = () => {
+    const q = inp.value.trim().toLowerCase();
+    document.querySelectorAll('#pickList .pickrow').forEach(b => {
+      b.style.display = (!q || b.dataset.search.indexOf(q) >= 0) ? '' : 'none';
+    });
+  };
+  document.querySelectorAll('[data-pickid]').forEach(b => {
+    b.onclick = () => { const f = byId(b.dataset.pickid); closeEditor(); if(f) addToTop(f); };
+  });
+  setTimeout(() => inp.focus(), 30);
+}
+
+/* ═══════════ РЕЖИМ «ПОРЯДОК СТРИМОВ» ═══════════
+   Карточки схлопываются в компактный список — там их и переставляют.
+   Порядок меняют редко, поэтому он не мешает обычному виду. */
+
+let ORDER_MODE = false;
+let ODRAG = null;
+
+function renderOrder(){
+  const list = streamList();
+  return `<div class="ordbox">
+    <div class="ordhint">Перетащите строки, чтобы изменить порядок карточек на доске.
+      Номера стримов не меняются — они нужны для связи с флажками.</div>
+    <div class="ordlist" id="ordlist">${list.map(s => `
+      <div class="orditem" draggable="true" data-num="${esc(String(s.n))}"
+           style="--sc:${pastel(s.c).text};--sm:${pastel(s.c).mid}">
+        <span class="oh">${svg('<path d="M4 8h16M4 16h16"/>')}</span>
+        <span class="on">${s.n}</span>
+        <span class="ot">${esc(s.name)}</span>
+        <span class="oc">${s.items.length} флажков</span>
+      </div>`).join('')}</div>
+    <div class="ordact">
+      <button class="bt pri" id="ordDone">Готово</button>
+    </div>
+  </div>`;
+}
+
+function afterOrderEl(zone, y){
+  const els = [...zone.querySelectorAll('.orditem:not(.dragging)')];
+  return els.reduce((closest, el) => {
+    const box = el.getBoundingClientRect();
+    const off = y - box.top - box.height / 2;
+    return (off < 0 && off > closest.off) ? { off, el } : closest;
+  }, { off: -Infinity, el: null }).el;
+}
+
+document.addEventListener('dragstart', e => {
+  const it = e.target.closest('.orditem');
+  if(!it || !EDITABLE) return;
+  ODRAG = it.dataset.num;
+  it.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  try { e.dataTransfer.setData('text/plain', ODRAG); } catch(x){}
+});
+
+document.addEventListener('dragover', e => {
+  if(!ODRAG) return;
+  const zone = e.target.closest('#ordlist');
+  if(!zone) return;
+  e.preventDefault();
+  const drag = zone.querySelector('.orditem.dragging');
+  if(!drag) return;
+  const after = afterOrderEl(zone, e.clientY);
+  after ? zone.insertBefore(drag, after) : zone.appendChild(drag);
+});
+
+document.addEventListener('drop', e => {
+  if(!ODRAG) return;
+  const zone = e.target.closest('#ordlist');
+  if(!zone) return;
+  e.preventDefault();
+  zone.querySelectorAll('.dragging').forEach(el => el.classList.remove('dragging'));
+
+  const nums = [...zone.querySelectorAll('.orditem')].map(el => el.dataset.num);
+  const items = nums.map((num, i) => ({ num, order: (i + 1) * 10 }));
+  // сразу отражаем в модели, чтобы доска не прыгнула обратно
+  items.forEach(it => {
+    const r = META.find(x => String(x['№']).trim() === it.num);
+    if(r) r['Порядок'] = String(it.order);
+  });
+  ODRAG = null;
+  push({ action:'orderStreams', items });
+});
+
+/* ═══════════ АРХИВ НЕДЕЛЬ ═══════════ */
+
+function showWeek(label){
+  const rows = ARCHIVE[label];
+  VIEWING_ARCHIVE = !!rows;
+  VIEWING_WEEK = rows ? label : '';
+  if(!rows){ load(); return; }
+  const saved = { FLAGS, INTENT, EDITABLE };
+  EDITABLE = false;
+  FLAGS = rows.map((r, i) => vm({ ...r, 'Тип':'флажок', 'Порядок': String((i + 1) * 10),
+    'ID': r['ID'] || ('arch-' + i) }));
+  INTENT = ARCH_INTENT[label] || { change:'', comm:'', mgmt:'', risk:'' };
+  render(label);
+  FLAGS = saved.FLAGS; INTENT = saved.INTENT; EDITABLE = saved.EDITABLE;
+  pill('ro', 'архив недели — только чтение');
+}
+
+/* ═══════════ СОБЫТИЯ ═══════════ */
+
+document.addEventListener('click', e => {
+  const ed = e.target.closest('[data-edit]');
+  if(ed){ openEditor(ed.dataset.edit); return; }
+  const add = e.target.closest('[data-add]');
+  if(add){ openNewFlag(add.dataset.add, add.dataset.sub); return; }
+  if(e.target.closest('#ordDone')){ ORDER_MODE = false; render(); return; }
+  const star = e.target.closest('[data-star]');
+  if(star && EDITABLE){ const f = byId(star.dataset.star); if(f) addToTop(f); return; }
+  const untop = e.target.closest('[data-untop]');
+  if(untop && EDITABLE){ const f = byId(untop.dataset.untop); if(f) removeFromTop(f); return; }
+  if(e.target.closest('[data-pick]') && EDITABLE){ openPicker(); return; }
+  const mk = e.target.closest('[data-mk]');
+  if(mk && EDITABLE){
+    const f = byId(mk.dataset.mk);
+    if(f){
+      const before = f.st;
+      f.st = (f.st === 'done') ? '' : 'done';
+      render();
+      push({ action:'update', id: f.id, fields: { 'Статус': ST_WORD[f.st] || '' },
+             was: { 'Статус': (RAWBY[f.id] || {})['Статус'] || '' } },
+           () => { f.st = before; });
+      if(RAWBY[f.id]) RAWBY[f.id]['Статус'] = ST_WORD[f.st] || '';
+    }
+    return;
+  }
+  const res = e.target.closest('[data-resolve]');
+  if(res && EDITABLE){ openDecision(res.dataset.resolve); return; }
+  if(e.target.closest('[data-newdec]') && EDITABLE){ openDecision(''); return; }
+  if(e.target.closest('[data-allasks]')){ SHOW_ALL_ASKS = !SHOW_ALL_ASKS; render(); return; }
+  const wp = e.target.closest('[data-weekpin]');
+  if(wp && EDITABLE){
+    const q = QUESTIONS.find(x => x.q === wp.dataset.weekpin);
+    if(!q) return;
+    const was = q.week ? 'да' : '';
+    q.week = !q.week; render();
+    push({ action:'updateRow', sheet: CFG.sheets.ask, matchCol:'Вопрос', matchValue:q.q,
+           fields:{ 'На неделе': q.week ? 'да' : '' }, was:{ 'На неделе': was } },
+         () => { q.week = !q.week; });
+    return;
+  }
+  const del = e.target.closest('[data-del-sheet]');
+  if(del){
+    if(!confirm('Убрать «' + del.dataset.delVal + '»? Строка удалится из таблицы.')) return;
+    pill('busy', 'убираю…');
+    api({ action:'deleteRow', sheet: del.dataset.delSheet,
+          matchCol: del.dataset.delCol, matchValue: del.dataset.delVal })
+      .then(() => { pill('ok', 'убрано'); load(); })
+      .catch(err => { pill('err', 'не удалось'); banner('<b>Не удалось убрать.</b> ' + esc(err.message)); });
+    return;
+  }
+  const addRow = e.target.closest('[data-new]');
+  if(addRow){
+    const sheet = addRow.dataset.new;
+    const isB = sheet === CFG.sheets.backlog;
+    const text = prompt(isB ? 'Новая идея:' : 'Вопрос, который нужно решить ' + CFG.decider + ' на этой неделе:');
+    if(!text || !text.trim()) return;
+    const fields = isB ? { 'Идея': text.trim() } : { 'Вопрос': text.trim(), 'На неделе': 'да' };
+    pill('busy', 'создаю…');
+    api({ action:'createRow', sheet, fields })
+      .then(() => { pill('ok', 'создано'); load(); })
+      .catch(err => { pill('err', 'не создалось'); banner('<b>Не удалось создать.</b> ' + esc(err.message)); });
+    return;
+  }
+  if(e.target.closest('[data-showdone]')){
+    document.body.classList.toggle('showdone');
+    if(typeof applyFit === 'function') applyFit();
+    return;
+  }
+  const op = e.target.closest('[data-open]');
+  if(op && !e.target.closest('.ed') && !e.target.closest('.inl')){
+    const k = op.dataset.open;
+    CLOSED.has(k) ? CLOSED.delete(k) : CLOSED.add(k);
+    render(); return;
+  }
+  const v = e.target.closest('[data-view]');
+  if(v){ VIEW = v.dataset.view; render(); return; }
+  const card = e.target.closest('.kcard');
+  if(card && EDITABLE){ openEditor(card.dataset.id); return; }
+});
+
+document.addEventListener('change', e => {
+  if(e.target.id === 'fStream'){ KFILTER.stream = e.target.value; render(); }
+  if(e.target.id === 'fOwner'){ KFILTER.owner = e.target.value; render(); }
+  if(e.target.id === 'week'){ showWeek(e.target.value); }
+});
+
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeEditor(); });
+
+document.getElementById('btnRetro').onclick = e =>
+  e.currentTarget.setAttribute('aria-pressed', document.body.classList.toggle('retro-on'));
+document.getElementById('btnCheck').onclick = e =>
+  e.currentTarget.setAttribute('aria-pressed', document.body.classList.toggle('check'));
+document.getElementById('btnDemo').onclick = e =>
+  e.currentTarget.setAttribute('aria-pressed', document.body.classList.toggle('demo'));
+document.getElementById('btnPrint').onclick = () => window.print();
+document.getElementById('btnDiag').onclick = async () => {
+  pill('busy', 'проверяю…');
+  const first = FLAGS[0] || {};
+  let text;
+  try {
+    const d = await api({ action:'diag', id: first.id || '' });
+    text = [
+      'адрес скрипта отвечает: да',
+      'версия скрипта: ' + (d.version || 'СТАРАЯ — нет действия diag'),
+      'листы: ' + (d.sheets || []).join(', '),
+      'строка заголовков ФЛАЖКИ: ' + d.headerRow,
+      'колонок распознано: ' + (d.columns || []).length,
+      'колонка ID есть: ' + (d.hasIdColumn ? 'да' : 'НЕТ — это и есть причина'),
+      'флажков в таблице: ' + d.rows,
+      'первые ID в таблице: ' + (d.firstIds || []).join(', '),
+      'ID, который шлёт доска: ' + (first.id || '(пусто!)'),
+      'строка по этому ID: ' + (d.foundRow > 0 ? d.foundRow : 'НЕ НАЙДЕНА'),
+      'пробная запись в лист: ' + (d.canWrite ? 'прошла' : 'НЕ ПРОШЛА ' + (d.writeError || '')),
+      'журнал пишется: ' + (d.logSheet ? 'да' : 'НЕТ ' + (d.logError || '')),
+      'не хватает листов: ' + ((d.missingSheets || []).join(', ') || 'нет'),
+      d.error ? 'ошибка: ' + d.error : ''
+    ].join('\n');
+    pill('ok', 'проверка выполнена');
+  } catch(e){
+    text = 'Запрос не дошёл до скрипта.\n\nПричина: ' + e.message +
+      '\n\nЧаще всего это значит, что развёртывание не обновлено на новую версию ' +
+      'или в его настройках доступ стоит не «Все».';
+    pill('err', 'проверка не прошла');
+  }
+  document.body.insertAdjacentHTML('beforeend',
+    `<div class="ovl" id="ovl"><div class="ed-card"><h3>Проверка записи</h3>
+      <div class="hint">Что доска увидела на стороне таблицы.</div>
+      <pre style="white-space:pre-wrap;font:12px/1.6 ui-monospace,Menlo,monospace;background:#f9fafb;
+        border:1px solid #e5e7eb;border-radius:7px;padding:12px;margin:0">${esc(text)}</pre>
+      <div class="ed-act"><button class="bt pri" onclick="closeEditor()">Понятно</button></div>
+    </div></div>`);
+  document.getElementById('ovl').onclick = e => { if(e.target.id === 'ovl') closeEditor(); };
+};
+/* Подгонка под окно: сжимаем масштаб, пока доска не поместится целиком.
+   zoom меняет раскладку по-настоящему — колонки пересобираются, текст остаётся резким. */
+let FIT = true;
+function applyFit(){
+  const b = document.body;
+  const info = document.getElementById('fitInfo');
+  if(!FIT){ b.style.zoom = ''; b.classList.remove('compact'); if(info) info.textContent = ''; return; }
+  b.classList.add('compact');
+  b.style.zoom = '';
+  let k = 1;
+  for(let pass = 0; pass < 5; pass++){
+    const need = document.documentElement.scrollHeight;
+    const have = window.innerHeight;
+    if(need <= have + 4) break;
+    k = Math.max(0.55, k * (have / need) * 0.995);
+    b.style.zoom = k;
+  }
+  const el = document.getElementById('fitInfo');
+  if(el) el.textContent = k < 0.995 ? Math.round(k * 100) + '%' : '';
+}
+document.getElementById('btnFit').onclick = e => {
+  FIT = !FIT;
+  e.currentTarget.setAttribute('aria-pressed', FIT);
+  e.currentTarget.querySelector('.fitLbl').textContent = FIT ? 'на экран' : 'крупно';
+  applyFit();
+};
+window.addEventListener('resize', () => { clearTimeout(window.__ft); window.__ft = setTimeout(applyFit, 180); });
+document.getElementById('btnNewStream').onclick = openNewStream;
+document.getElementById('btnOrder').onclick = e => {
+  ORDER_MODE = !ORDER_MODE;
+  e.currentTarget.setAttribute('aria-pressed', ORDER_MODE);
+  render();
+};
+
+/* ═══════════ ЖИВОЕ ОБНОВЛЕНИЕ ═══════════
+   Спрашиваем только счётчик версий. Полные данные тянем,
+   когда он изменился, — и не в момент, когда человек печатает. */
+
+function busyNow(){
+  return SAVING > 0
+    || document.querySelector('.inl.editing')
+    || document.getElementById('ovl')
+    || DRAG || ODRAG || ORDER_MODE || VIEWING_ARCHIVE
+    || document.hidden;
+}
+
+async function poll(){
+  if(!CFG.apiUrl || !KEY || /ВСТАВИТЬ/.test(CFG.apiUrl)) return;
+  if(busyNow()) return;
+  try {
+    const r = await fetch(CFG.apiUrl + '?ping=1&key=' + encodeURIComponent(KEY), { cache:'no-store' });
+    const j = await r.json();
+    POLL_FAILS = 0;
+    if(!LIVE){                       // связь вернулась после обрыва
+      banner('');
+      await load();
+      return;
+    }
+    if(j.ok && j.rev && j.rev !== REV) await load();
+  } catch(e){
+    POLL_FAILS++;
+    if(POLL_FAILS === 3 && LIVE){
+      LIVE = false; EDITABLE = false;
+      document.body.classList.remove('edit');
+      pill('err', 'нет связи');
+      banner('<b>Связь с таблицей потеряна.</b> Правки временно выключены, ' +
+             'доска сама переподключится, как только связь вернётся.');
+      render();
+    }
+  }
+}
+setInterval(poll, POLL_MS);
+document.addEventListener('visibilitychange', () => { if(!document.hidden) poll(); });
+
+/* ═══════════ СТАРТ ═══════════ */
+document.body.classList.add('compact');
+render();
+load();
+</script>
+</body>
+</html>

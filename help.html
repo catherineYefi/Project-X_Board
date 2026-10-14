@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Доска Проекта X — как работать</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+:root{
+  --ink:#1f2937; --ink-2:#4b5563; --ink-3:#6b7280; --ink-4:#9ca3af;
+  --line:#e5e7eb; --line-2:#d1d5db;
+  --hot:#dc2626; --hot-bg:#fef2f2;
+  --warm:#b45309; --warm-bg:#fffbeb;
+  --blue:#1d4ed8; --blue-bg:#f5f9ff; --blue-bd:#c7ddf7;
+  --green:#15803d; --green-bg:#f3fbf5; --green-bd:#bfe3c9;
+  --violet:#6d28d9; --violet-bg:#faf8ff; --violet-bd:#dcd0f6;
+  --r:10px;
+}
+html,body{margin:0;padding:0}
+body{background:#fff;color:var(--ink);
+  font:400 15px/1.55 'Onest',-apple-system,'Segoe UI',Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:840px;margin:0 auto;padding:0 20px 60px}
+h1,h2,h3{margin:0;font-weight:700;letter-spacing:-0.01em}
+a{color:var(--blue)}
+
+.hero{background:#f3f2ef;padding:34px 20px 26px;margin-bottom:26px;position:relative;overflow:hidden}
+.hero-in{max-width:840px;margin:0 auto;position:relative}
+.hero:after{content:'';position:absolute;right:-30px;top:-70px;width:230px;height:250px;
+  background:url('nechto-sphere.png') no-repeat center/contain;opacity:.09}
+h1{font-size:27px;text-transform:uppercase}
+.hero p{margin:8px 0 0;color:var(--ink-3);font-size:14px;max-width:560px}
+.back{display:inline-flex;align-items:center;gap:6px;margin-top:16px;height:34px;padding:0 14px;
+  border:1px solid var(--line-2);border-radius:8px;background:#fff;color:var(--ink-2);
+  font-size:13px;font-weight:500;text-decoration:none}
+.back:hover{border-color:var(--ink-4)}
+
+h2{font-size:19px;margin:34px 0 12px;padding-top:22px;border-top:1px solid var(--line)}
+h2:first-of-type{border-top:0;padding-top:0;margin-top:0}
+h3{font-size:15px;margin:20px 0 8px}
+p{margin:0 0 11px}
+.lead{color:var(--ink-2)}
+
+.steps{counter-reset:s;margin:0;padding:0;list-style:none}
+.steps li{counter-increment:s;position:relative;padding:13px 16px 13px 52px;margin-bottom:8px;
+  background:var(--blue-bg);border:1px solid var(--blue-bd);border-radius:var(--r)}
+.steps li:before{content:counter(s);position:absolute;left:15px;top:13px;width:23px;height:23px;
+  border-radius:50%;background:var(--blue);color:#fff;font-size:12px;font-weight:700;
+  display:flex;align-items:center;justify-content:center}
+.steps b{font-weight:600}
+.steps .sm{display:block;color:var(--ink-3);font-size:13px;margin-top:3px}
+
+table{width:100%;border-collapse:collapse;margin:0 0 14px;font-size:14px}
+th{text-align:left;font-weight:600;color:var(--ink-3);font-size:12px;text-transform:uppercase;
+  letter-spacing:.03em;padding:0 10px 7px;border-bottom:1px solid var(--line)}
+td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+td:first-child{font-weight:500;white-space:nowrap}
+code{background:#f3f4f6;border-radius:4px;padding:1px 5px;font:500 13px/1 ui-monospace,Menlo,monospace}
+
+.box{border-radius:var(--r);padding:15px 17px;margin:0 0 14px;border:1px solid}
+.box b{font-weight:600}
+.box.warn{background:var(--warm-bg);border-color:#f5e0b0}
+.box.stop{background:var(--hot-bg);border-color:#fecaca}
+.box.ok{background:var(--green-bg);border-color:var(--green-bd)}
+.box.note{background:var(--violet-bg);border-color:var(--violet-bd)}
+.box p:last-child{margin-bottom:0}
+ul.tight{margin:6px 0 0;padding-left:19px}
+ul.tight li{margin-bottom:5px}
+
+.foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line);
+  color:var(--ink-3);font-size:13px}
+@media print{.hero{background:#fff}.back{display:none}}
+@media(max-width:640px){
+  h1{font-size:21px} .wrap{padding:0 14px 40px} .hero{padding:24px 14px 20px}
+  table,thead,tbody,th,td,tr{display:block}
+  th{display:none}
+  td{border:0;padding:2px 0}
+  tr{border-bottom:1px solid var(--line);padding:10px 0}
+  td:first-child{color:var(--ink-3);font-size:12.5px}
+}
+</style>
+</head>
+<body>
+<div class="hero"><div class="hero-in">
+  <h1>Доска Проекта X — как работать</h1>
+  <p>Доска — рабочее место, таблица — хранилище. Всё, что нужно каждую неделю, — в первом разделе. Остальное читается один раз.</p>
+  <a class="back" href="./">← вернуться на доску</a>
+</div></div>
+
+<div class="wrap">
+
+<h2>Каждую неделю</h2>
+<p class="lead">Ритуал из шести шагов. У каждого шага один ответственный. Всё, кроме последнего шага, делается на доске.</p>
+
+<ol class="steps">
+  <li><b>До синхрона — оператор доски: «Факт» по каждому флажку в работе.</b>
+    <span class="sm">Открыть флажок карандашом. В «Договорились» лежит обещанное на прошлой неделе, в «Факт» вписать, что реально произошло. Если owner не прислал факт — так и написать: «факта нет». Доска существует ради этой пары.</span></li>
+  <li><b>До синхрона — оператор: замысел недели.</b>
+    <span class="sm">Первая панель слева: что изменится к концу недели, коммерческий фокус, управленческий фокус, риск. Клик по строке, Enter — сохранить.</span></li>
+  <li><b>На синхроне — ведущий идёт по стримам сверху вниз.</b>
+    <span class="sm">Включить «ретро»: под флажками появится «обещали → факт». Не обсуждать всё подряд — только стримы по порядку. «Проверка правил» подсветит флажки без owner’а и срока — их добить прямо на встрече.</span></li>
+  <li><b>На синхроне — решения.</b>
+    <span class="sm">Панель «Нужно решение Кирилла» показывает вопросы этой недели. Решили — кнопка ✓ у вопроса, одной фразой, что решили и кто. Запись уйдёт в журнал решений и появится в зелёной полосе «Решено за неделю». Решение, которого нет на доске, не считается принятым.</span></li>
+  <li><b>В конце синхрона — топ-3 и новые флажки.</b>
+    <span class="sm">Звёздочка у флажка поднимает его в топ-3. Новый флажок — «+ флажок» внизу стрима. Формулировка — результат, а не действие: не «созвониться с юристом», а «договор подписан». Один owner, один срок.</span></li>
+  <li><b>После синхрона — оператор закрывает неделю в таблице.</b>
+    <span class="sm">Меню <b>Пространство → Закрыть неделю</b>. Скрипт сложит слепок флажков и замысла в архив, перенесёт «Факт» в «Договорились», очистит «Факт» и топ-3, спросит подпись новой недели.</span></li>
+</ol>
+
+<div class="box warn">
+  <p><b>Если неделю не закрывать, доска умирает.</b> «Договорились» перестаёт обновляться, ретро показывает старое, флажки превращаются в заметки. Закрытие недели — обязательный шаг, а не опция.</p>
+</div>
+
+<h2>Что на экране</h2>
+<table>
+  <tr><td>Замысел недели</td><td>Рамка недели: что должно измениться и главный риск.</td></tr>
+  <tr><td>Топ-3</td><td>Три главных результата недели. Собирается из флажков со звёздочкой. Если мест нет — доска спросит, какой флажок уступит место.</td></tr>
+  <tr><td>Нужно решение Кирилла</td><td>Вопросы, отмеченные «на этой неделе», и флажки с меткой «нужно решение». Кнопка «ещё открытых вопросов» показывает остальные. «+нед» / «−нед» — вынести вопрос на неделю или снять.</td></tr>
+  <tr><td>Backlog</td><td>Идеи, которые ещё не стали флажками.</td></tr>
+  <tr><td>Решено за неделю</td><td>Решения с подписью текущей недели. Весь журнал — лист РЕШЕНИЯ в таблице.</td></tr>
+  <tr><td>Стримы</td><td>Участки работы: цель, главный флажок, флажки, внизу owner, срок и прогресс. Клик по шапке сворачивает карточку, клик по названию — правит его.</td></tr>
+  <tr><td>Правила</td><td>Десять правил работы внизу.</td></tr>
+</table>
+
+<h3>Значки у флажков</h3>
+<table>
+  <tr><td>Пустой квадрат</td><td>Не начато</td></tr>
+  <tr><td>Оранжевый</td><td>В работе</td></tr>
+  <tr><td>Зелёный с галочкой</td><td>Сделано</td></tr>
+  <tr><td>Красный контур</td><td>Заблокировано — нужен blocker и решение</td></tr>
+  <tr><td>Пунктир</td><td>Бэклог</td></tr>
+</table>
+<p>Красная дата — просрочено. Оранжевая — срок на этой неделе. «owner —» и «срок —» — поле пустое, его нужно добить.</p>
+
+<h2>Что можно менять и как</h2>
+<table>
+  <tr><th>Что</th><th>Как</th></tr>
+  <tr><td>Текст почти везде</td><td>Клик по нему. Enter сохраняет, Escape отменяет. При наведении поле желтеет — значит правится.</td></tr>
+  <tr><td>Флажок целиком</td><td>Карандаш справа: формулировка, owner, срок, статус, стрим, «Договорились», «Факт», blocker, метка «нужно решение».</td></tr>
+  <tr><td>Порядок и стрим флажка</td><td>Перетащить мышкой. На телефоне — через карандаш.</td></tr>
+  <tr><td>Статус</td><td>Карандаш или перетаскивание в «канбане».</td></tr>
+  <tr><td>Убрать флажок</td><td>Карандаш → «В бэклог». Флажки не удаляются совсем — защита от случайной потери.</td></tr>
+  <tr><td>Вопрос, идея, решение</td><td>«+ вопрос», «+ идея», «+ решение» в своих панелях.</td></tr>
+</table>
+
+<div class="box ok">
+  <p><b>Как понять, что сохранилось.</b> Индикатор в шапке: «подключено», «сохраняю…», «сохранено». Если правку не удалось записать, наверху появится полоса с причиной, а правка вернётся на место. Если кто-то в эту же минуту изменил то же поле, доска не затрёт его правку, а подтянет свежие данные.</p>
+  <p>Доска обновляется сама каждые несколько секунд, в том числе после правок прямо в таблице.</p>
+</div>
+
+<h2>Кнопки в шапке</h2>
+<table>
+  <tr><td>стримы / канбан</td><td>Два вида одних данных. Канбан — колонки по статусам: видно, что застряло.</td></tr>
+  <tr><td>выбор недели</td><td>Текущая и прошлые недели. Прошлые — только чтение.</td></tr>
+  <tr><td>ретро</td><td>Пары «обещали → факт» под флажками. Главный режим синхрона.</td></tr>
+  <tr><td>проверка правил</td><td>Подсвечивает флажки без owner’а, без срока, с формулировкой-процессом.</td></tr>
+  <tr><td>демо</td><td>Прячет стримы с контуром «личное» и флажки с меткой «скрывать в демо». Это защита экрана при показе, а не защита данных: кто открыл доску по ссылке, видит всё.</td></tr>
+  <tr><td>порядок</td><td>Переставить карточки стримов.</td></tr>
+  <tr><td>на экран / крупно</td><td>Ужать доску под экран или вернуть обычный размер.</td></tr>
+  <tr><td>проверка записи</td><td>Диагностика, если что-то не сохраняется.</td></tr>
+  <tr><td>pdf</td><td>Печать страницы — чтобы отправить картинку в Telegram.</td></tr>
+</table>
+
+<h2>Доступ</h2>
+<div class="box note">
+  <p>Доска открывается по ссылке с ключом. При первом открытии ключ запоминается в браузере и исчезает из адресной строки. Доска один раз спросит имя — им подписываются правки в журнале.</p>
+  <p><b>Ссылку не пересылать за пределы команды.</b> Если она утекла — в таблице <b>Пространство → Сменить ключ доступа</b> и разослать новую ссылку.</p>
+</div>
+
+<h2>Таблица: что в ней лежит</h2>
+<table>
+  <tr><th>Лист</th><th>Что там</th></tr>
+  <tr><td>ФЛАЖКИ</td><td>Одна строка = один флажок.</td></tr>
+  <tr><td>СТРИМЫ</td><td>Стримы: цель, главный флажок, owner, контур, иконка, цвет, порядок.</td></tr>
+  <tr><td>НЕДЕЛЯ</td><td>Подпись недели и четыре поля замысла.</td></tr>
+  <tr><td>НУЖНО РЕШЕНИЕ</td><td>Открытые вопросы: кому решать, срок, «на неделе», статус.</td></tr>
+  <tr><td>РЕШЕНИЯ</td><td>Журнал решений. Записи только добавляются. Если решение меняется — новая строка, у старой статус «отменено».</td></tr>
+  <tr><td>БЭКЛОГ, ПРАВИЛА</td><td>Идеи и правила работы.</td></tr>
+  <tr><td>СПРАВОЧНИКИ</td><td>Выпадающие списки. Новых людей дописывать в колонку Owner.</td></tr>
+  <tr><td>АРХИВ, АРХИВ ЗАМЫСЛА</td><td>Слепки прошлых недель. Заполняются кнопкой «Закрыть неделю».</td></tr>
+  <tr><td>ЖУРНАЛ</td><td>История всех правок: когда, что, было → стало, кто.</td></tr>
+</table>
+
+<h2>Чего не делать</h2>
+<div class="box stop">
+  <ul class="tight">
+    <li><b>Не переименовывать листы и заголовки колонок</b> — доска находит их по названию.</li>
+    <li><b>Не удалять колонку ID</b> на листе ФЛАЖКИ и не менять номера стримов.</li>
+    <li><b>Не править руками АРХИВ, АРХИВ ЗАМЫСЛА и ЖУРНАЛ.</b></li>
+    <li><b>Не удалять строку-подсказку</b> над заголовками.</li>
+  </ul>
+  <p style="margin-top:10px">Если что-то из этого случилось — <b>Файл → История версий</b> в таблице возвращает любой прошлый момент.</p>
+</div>
+
+<h2>Если что-то пошло не так</h2>
+<ol class="steps">
+  <li><b>Обновить страницу с очисткой кэша.</b>
+    <span class="sm"><code>Ctrl+Shift+R</code> или <code>Cmd+Shift+R</code>.</span></li>
+  <li><b>Нажать «проверка записи»</b> и сделать скриншот окна.
+    <span class="sm">Скриншот и описание, что делали, — оператору доски.</span></li>
+</ol>
+
+<div class="foot">
+  Проект X · общее пространство работы.<br>
+  Доска и таблица связаны: правка в одном месте попадает в другое.
+</div>
+
+</div>
+</body>
+</html>
